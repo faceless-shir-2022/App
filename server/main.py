@@ -15,7 +15,18 @@ def navigator1(from_cab, to_cab):
     point_b = db_sess.query(Fruktovaya).filter(Fruktovaya.name_or_number == to_cab).first()
     if point_a.floor != point_b.floor:
         leader = nearest("fruktovaya", point_a.x_coordinate, point_a.y_coordinate)
-    return f'go away... okay, you are going from {point_a.name_or_number} to {point_b.name_or_number}'
+    return f"""<!doctype html>
+                    <html lang="en">
+                        <head>
+                            <meta charset="utf-8">
+                            <title>Ошибка</title>
+                        </head>
+                        <body>
+                            <img src="/static/img/fruktovaya_floor1.jfif" alt="лох">
+                            <h2>go away... okay, you are going from {point_a.name_or_number} to {point_b.name_or_number}</h2>
+                        </body>
+                    </html>"""
+    # return f"go away... okay, you are going from {point_a.name_or_number} to {point_b.name_or_number}"
 
 
 @app.route("/chongarskaya/<from_cab>/<to_cab>", methods=['GET', 'POST'])
@@ -39,7 +50,7 @@ def navigator3(from_cab, to_cab):
 
 
 def nearest(school, x, y):
-    leaders = {"fruktovaya": [[1, 1], [1, 1], [1, 1], [1, 1]],
+    leaders = {"fruktovaya": [[120, 180], [1160, 180], [120, 870], [1160, 870]],
                "chongarskaya": [[1, 1], [1, 1], [1, 1], [1, 1]],
                "krivorozhskaya": [[1, 1], [1, 1], [1, 1], [1, 1]]}
     print(leaders[school][0])
