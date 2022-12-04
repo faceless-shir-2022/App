@@ -1,6 +1,10 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'dart:io';
 
-const List<String> list = <String>['One', 'Two', 'Three', 'Four'];
+const List<String> list = <String>['11T', '11C', '10T', '10C'];
+// var config = File("/assets/classes.txt");
+// List<String> list = config.readAsLinesSync(encoding: utf8);
 
 class DropdownButtonExample extends StatefulWidget {
   const DropdownButtonExample({super.key});

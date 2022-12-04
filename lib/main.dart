@@ -19,7 +19,10 @@ class CCTracker extends StatelessWidget {
         var path = routeSettings.name.toString().split('/');
         if (path[1] == 'second') {
           return MaterialPageRoute(
-              builder: (context) => Navigator1(id: path[2]),
+              builder: (context) => Navigator1(
+                    id: path[2],
+                    img: path[3],
+                  ),
               settings: routeSettings);
         }
       },

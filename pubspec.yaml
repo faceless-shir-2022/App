@@ -67,6 +67,8 @@ flutter:
     - assets/image/fruktovaya/1.jpg
     - assets/image/fruktovaya/2.jpg
     - assets/image/fruktovaya/3.jpg
+    - assets/classes.txt
+    
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

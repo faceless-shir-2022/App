@@ -1,10 +1,14 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 
 class Adress extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Выберите адрес вашей школы')),
+      appBar: AppBar(
+        title: Text('Выберите адрес вашей школы'),
+      ),
       body: Center(
         child: Stack(
           children: <Widget>[
@@ -22,7 +26,7 @@ class Adress extends StatelessWidget {
               padding: EdgeInsets.only(top: 200),
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, '/second/Фруктовая');
+                  Navigator.pushNamed(context, '/second/Фруктовая/1');
                 },
                 child: Text('Фруктовая'),
               ),
@@ -41,7 +45,7 @@ class Adress extends StatelessWidget {
               padding: EdgeInsets.only(top: 175),
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, '/second/Чонгарская');
+                  Navigator.pushNamed(context, '/second/Чонгарская/1');
                 },
                 child: Text('Чонгарская'),
               ),
@@ -59,7 +63,7 @@ class Adress extends StatelessWidget {
               padding: EdgeInsets.only(bottom: 45),
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, '/second/Криворожская');
+                  Navigator.pushNamed(context, '/second/Криворожская/1');
                 },
                 child: Text('Криворожская'),
               ),
