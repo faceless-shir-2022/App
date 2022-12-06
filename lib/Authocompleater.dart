@@ -1,9 +1,9 @@
-// import 'dart:js';
 import 'package:flutter/material.dart';
 
 class AutocompleteBasicExample extends StatelessWidget {
   final myText;
-  const AutocompleteBasicExample({super.key, this.myText});
+  final controller_2;
+  const AutocompleteBasicExample({super.key, this.myText, this.controller_2});
 
   static const List<String> _kOptions = <String>[
     '107',
@@ -24,14 +24,16 @@ class AutocompleteBasicExample extends StatelessWidget {
       },
       onSelected: (String selection) {
         debugPrint('You just selected $selection');
+        controller_2.text = '$selection';
       },
       fieldViewBuilder:
           (context, textEditingController, focusNode, onEditingComplete) {
         return TextField(
           controller: textEditingController,
+          // controller: controller_2,
           focusNode: focusNode,
           onEditingComplete: onEditingComplete,
-          decoration: InputDecoration(hintText: 'Введите точку $myText пути'),
+          decoration: InputDecoration(hintText: '$myText'),
         );
       },
     );

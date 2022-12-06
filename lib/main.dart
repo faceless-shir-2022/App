@@ -3,9 +3,9 @@ import 'package:flutter_application_1/navigator.dart';
 import 'package:flutter_application_1/adress.dart';
 import 'package:flutter_application_1/settings.dart';
 
-void main() => runApp(CCTracker());
+void main() => runApp(MainWin());
 
-class CCTracker extends StatelessWidget {
+class MainWin extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -13,7 +13,7 @@ class CCTracker extends StatelessWidget {
       routes: {
         '/second': (context) => Navigator1(),
         '/first': (context) => Adress(),
-        '/settings': (context) => Settings()
+        '/settings': (context) => const Settings()
       },
       onGenerateRoute: (routeSettings) {
         var path = routeSettings.name.toString().split('/');
@@ -22,11 +22,11 @@ class CCTracker extends StatelessWidget {
               builder: (context) => Navigator1(
                     id: path[2],
                     img: path[3],
+                    isSearch: path[4],
                   ),
               settings: routeSettings);
         }
       },
-      // title: 'Awesome CC Tracker',
       theme: ThemeData(
           primarySwatch: Colors.blue,
           scaffoldBackgroundColor: Color.fromARGB(255, 180, 224, 251)),
