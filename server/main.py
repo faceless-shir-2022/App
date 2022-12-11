@@ -2,7 +2,7 @@ from data import db_session
 from data.fruktovaya_classrooms import Fruktovaya
 from data.chongarskaya_classrooms import Chongarskaya
 from data.krivorozhskaya_classrooms import Krivorozhskaya
-from flask import Flask, render_template, request
+from flask import Flask
 from PIL import Image, ImageDraw
 from math import sqrt
 
@@ -26,17 +26,19 @@ def navigator1(from_cab, to_cab):
         leader = nearest("fruktovaya", point_a.x_coordinate, point_a.y_coordinate)
 
     for image in images:
+
         if (str(point_a.floor) not in image[-11:]) and (str(point_b.floor) not in image[-11:]):
+            # если этаж не используется в маршруте
             with Image.open(image) as im:
                 image2 = image[:-5] + "(1).jfif"
                 im.save(image2)
+
         elif (str(point_a.floor) in image[-11:]) and (str(point_b.floor) in image[-11:]):
             with Image.open(image) as im:
                 # если на одном этаже А и В
                 draw = ImageDraw.Draw(im)
                 ax, ay = point_a.x_coordinate, point_a.y_coordinate
                 bx, by = point_b.x_coordinate, point_b.y_coordinate
-                minx, miny = 2000, 2000
                 xdiff, ydiff = abs(ax - bx), abs(ay - by)
 
                 coords = min_distance(ax, ay, xy_choice)
@@ -66,57 +68,60 @@ def navigator1(from_cab, to_cab):
                             final_way = [(ax, ay), (ax, coords[1]), (coords[0], coords[1]), (coords1[0], coords1[1]),
                                          (bx, coords1[1]), (bx, by)]
                         else:
-                            # здесь могла быть ваша реклама
+                            [ax, ay], [bx, by] = sorted([[ax, ay], [bx, by]], key=lambda j: j[0])
+                            coords = min_distance((ax + bx) // 2, (ay + by) // 2, xy_choice)
                             print("3)", coords, (ax, ay), (bx, by))
-                            final_way = [(ax, ay), (), (bx, by)]
+                            if ax <= 225 or bx <= 225:
+                                final_way = [(ax, ay), (coords[0], ay), (coords[0], coords[1]), (bx, coords[1]), (bx, by)]
+                            else:
+                                final_way = [(ax, ay), (ax, coords[1]), (coords[0], coords[1]), (coords[0], by), (bx, by)]
                         draw.line(final_way, fill="RED", width=10)
 
                 image2 = image[:-5] + "(1).jfif"
                 im.save(image2)
+
         elif str(point_a.floor) in image[-11:] and leader:
+            print("from A to leader")
             with Image.open(image) as im:
                 # довести от пункта А до лестницы
                 draw = ImageDraw.Draw(im)
                 x, y = point_a.x_coordinate, point_a.y_coordinate
-                minx, miny = 2000, 2000
 
-                for x1 in x_choice:
-                    for y1 in y_choice:
-                        minx, miny = min(minx, abs(leader[0] - x1)), min(miny, abs(leader[1] - y1))
-                print(x, y)
-                for x1 in x_choice:
-                    for y1 in y_choice:
-                        if ((x1 == (leader[0] + minx)) or (x1 == (leader[0] - minx))) and \
-                                ((y1 == (leader[1] + miny)) or (y1 == (leader[1] - miny))):
-                            coords = [x1, y1]
-                            print(coords)
+                coords = min_distance(leader[0], leader[1], xy_choice)
+                print(coords)
 
-                final_way = [(x, y), (coords[0], y), (coords[0], coords[1]), (leader[0], coords[1]),
-                             (leader[0], leader[1])]
+                if x <= 225 or x >= 1053:
+                    final_way = [(x, y), (coords[0], y), (coords[0], coords[1]), (leader[0], coords[1]), (leader[0], leader[1])]
+                else:
+                    final_way = [(x, y), (x, leader[1]), (leader[0], leader[1])]
                 draw.line(final_way, fill="RED", width=10)
 
                 image2 = image[:-5] + "(1).jfif"
                 im.save(image2)
+
         elif str(point_b.floor) in image[-11:] and leader:
+            print("from leader to B")
             with Image.open(image) as im:
                 # довести от лестницы до пункта В
                 draw = ImageDraw.Draw(im)
                 x, y = point_b.x_coordinate, point_b.y_coordinate
-                minx, miny = 2000, 2000
 
-                for x1 in x_choice:
-                    for y1 in y_choice:
-                        minx, miny = min(minx, abs(leader[0] - x1)), min(miny, abs(leader[1] - y1))
-                print(x, y)
-                for x1 in x_choice:
-                    for y1 in y_choice:
-                        if ((x1 == (leader[0] + minx)) or (x1 == (leader[0] - minx))) and \
-                                ((y1 == (leader[1] + miny)) or (y1 == (leader[1] - miny))):
-                            coords = [x1, y1]
-                            print(coords)
+                coords = min_distance(leader[0], leader[1], xy_choice)
+                print(coords)
 
-                final_way = [(x, y), (coords[0], y), (coords[0], coords[1]), (leader[0], coords[1]),
-                             (leader[0], leader[1])]
+                if y <= 140 or y >= 912:
+                    print("ne simple")
+                    if coords[1] == min_distance(x, y, xy_choice)[1]:
+                        final_way = [(x, y), (x, leader[1]), (leader[0], leader[1])]
+                    else:
+                        coords1 = [coords[0], y_choice[y_choice.index(coords[1]) - 1]]
+                        final_way = [(x, y), (x, coords1[1]), (coords1[0], coords1[1]), (coords1[0], leader[1]), (leader[0], leader[1])]
+                else:
+                    if abs(leader[0] - x) > abs(1053 - 225):
+                        coords1 = [x_choice[x_choice.index(coords[0]) - 1], coords[1]]
+                        final_way = [(x, y), (coords1[0], y), (coords1[0], coords1[1]), (leader[0], leader[1])]
+                    else:
+                        final_way = [(x, y), (coords[0], y), (coords[0], coords[1]), (leader[0], leader[1])]
                 draw.line(final_way, fill="RED", width=10)
 
                 image2 = image[:-5] + "(1).jfif"
@@ -148,7 +153,7 @@ def navigator3(from_cab, to_cab):
 
 
 def nearest(school, x, y):
-    leaders = {"fruktovaya": [[120, 180], [1160, 180], [120, 870], [1160, 870]],
+    leaders = {"fruktovaya": [[120, 180], [1160, 180], [120, 865], [1160, 865]],
                "chongarskaya": [[1, 1], [1, 1], [1, 1], [1, 1]],
                "krivorozhskaya": [[1, 1], [1, 1], [1, 1], [1, 1]]}
     minxdiff, minydiff = 2000, 2000
