@@ -21,9 +21,7 @@ def navigator1(from_cab, to_cab):
     db_sess = db_session.create_session()
     point_a = db_sess.query(Fruktovaya).filter(Fruktovaya.name_or_number == from_cab).first()
     point_b = db_sess.query(Fruktovaya).filter(Fruktovaya.name_or_number == to_cab).first()
-
-    if point_a.floor != point_b.floor:
-        leader = nearest("fruktovaya", point_a.x_coordinate, point_a.y_coordinate)
+    leader = nearest("fruktovaya", point_a.x_coordinate, point_a.y_coordinate)
 
     for image in images:
 
@@ -43,19 +41,39 @@ def navigator1(from_cab, to_cab):
 
                 coords = min_distance(ax, ay, xy_choice)
 
-                if (xdiff <= abs(coords[0] - max(ax, bx) + 50)) and 150 <= ay <= 785 and 150 <= by <= 785:
+                if xdiff < abs(1053 - 225 - 2) and 150 <= ay <= 785 and 150 <= by <= 785:
                     final_way = [(ax, ay), (coords[0], ay), (coords[0], by), (bx, by)]
                     draw.line(final_way, fill="RED", width=10)
                     print("vertical", ax, ay, bx, by, coords, xdiff, abs(coords[0] - max(ax, bx) - 50))
-                elif 1020 >= ax >= 240 and 1020 >= bx >= 240 and (ydiff <= abs(coords[1] - max(ay, by) + 50)):
+                elif 1020 >= ax >= 240 and 1020 >= bx >= 240 and ydiff < abs(912 - 140):
                     final_way = [(ax, ay), (ax, coords[1]), (bx, coords[1]), (bx, by)]
                     draw.line(final_way, fill="RED", width=10)
                     print("horizontal")
+
                 else:
                     print("hard way")
                     if point_a.floor == 1:
-                        final_way = [(ax, ay), (bx, by)]
-                        draw.line(final_way, fill="RED", width=10)
+                        leader1 = nearest("fruktovaya", bx, by)
+                        if min_distance(ax, ay, [leader, [170, 865], [1110, 865]]) == leader and \
+                                min_distance(bx, by, [leader1, [170, 865], [1110, 865]]) == leader1:
+                            coords, coords1 = min_distance(ax, ay, xy_choice), min_distance(bx, by, xy_choice)
+                            draw.line([(ax, ay), (coords[0], ay), (coords[0], coords[1]), (leader[0], leader[1])], fill="RED", width=10)
+                            draw.line([(bx, by), (coords1[0], by), (coords1[0], coords1[1]), (leader1[0], leader1[1])], fill="RED", width=10)
+                            with Image.open(images[1]) as im2:
+                                draw = ImageDraw.Draw(im2)
+                                draw.line([(leader[0], leader[1]), (leader1[0], leader1[1])], fill="RED", width=10)
+                                image2 = images[1][:-5] + "(1).jfif"
+                                im2.save(image2)
+                            image2 = image[:-5] + "(1).jfif"
+                            im.save(image2)
+                            break
+
+                        else:
+                            [ax, ay], [bx, by] = sorted([[ax, ay], [bx, by]], key=lambda j: j[0])
+                            coords, coords1 = [170, 865], [1110, 865]
+                            final_way = [(ax, ay), (coords[0], ay), (coords[0], coords[1]), (coords1[0], coords1[1]), (coords1[0], by), (bx, by)]
+                            draw.line(final_way, fill="RED", width=10)
+
                     else:
                         if (ax <= 225 or ax >= 1053) and (bx <= 225 or bx >= 1053):
                             coords1 = [x_choice[x_choice.index(coords[0]) - 1], coords[1]]
