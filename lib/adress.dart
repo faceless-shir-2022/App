@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/alertDialog.dart';
 
 class Adress extends StatelessWidget {
   @override
@@ -6,6 +7,15 @@ class Adress extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Выберите адрес вашей школы'),
+        automaticallyImplyLeading: false,
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.info_sharp),
+            onPressed: () {
+              showDialog(context: context, builder: (_) => RulesOfUsing());
+            },
+          ),
+        ],
       ),
       body: Center(
         child: Column(
@@ -23,7 +33,8 @@ class Adress extends StatelessWidget {
               alignment: Alignment.topCenter,
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, '/second/Фруктовая/1/nosearch');
+                  Navigator.pushNamed(
+                      context, '/second/Фруктовая/1/nosearch//');
                 },
                 child: Text('Фруктовая'),
               ),
@@ -39,7 +50,9 @@ class Adress extends StatelessWidget {
               alignment: Alignment.center,
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, '/second/Чонгарская/1/nosearch');
+                  showDialog(context: context, builder: (_) => DialogExample());
+                  // Navigator.pushNamed(
+                  //     context, '/second/Чонгарская/1/nosearch//');
                 },
                 child: Text('Чонгарская'),
               ),
@@ -56,8 +69,9 @@ class Adress extends StatelessWidget {
               alignment: Alignment.bottomCenter,
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.pushNamed(
-                      context, '/second/Криворожская/1/nosearch');
+                  showDialog(context: context, builder: (_) => DialogExample());
+                  // Navigator.pushNamed(
+                  //     context, '/second/Криворожская/1/nosearch//');
                 },
                 child: Text('Криворожская'),
               ),

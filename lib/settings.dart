@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/DropDownClass.dart';
+import 'package:flutter_application_1/alertDialog.dart';
 
 class Settings extends StatelessWidget {
   const Settings({super.key});
@@ -18,6 +19,9 @@ class Settings extends StatelessWidget {
               alignment: Alignment.topCenter,
               child: const DropdownButtonExample(),
             ),
+            Container(
+              child: const DialogExample(),
+            )
           ],
         ),
       ),
