@@ -12,7 +12,31 @@ app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 
 @app.route("/fruktovaya/<from_cab>/<to_cab>", methods=['GET', 'POST'])
 def navigator1(from_cab, to_cab):
-    leader = [0, 0]
+    """
+    Построение маршрутов. Здание по адресу Фруктовая ул., д.9
+
+    Атрибуты
+    --------
+    from_cab : str
+        название/номер пункта отправления (далее - пункта А)
+    to_cab : str
+        название/номер пункта назначения (далее - пункта В)
+    x_choice, y_choice : list, list
+        списки х и у координат поворотов
+    xy_choice : list
+        список координат поворотов (соотнесённых, в отличие от предыдущих двух списков)
+    images : list
+        список путей к картинкам с картами этажей здания школы на Фруктовой
+    leader : list
+        координаты ближайшей к пункту А лестницы
+    leader1 : list
+        координаты ближайшей к пункту В лестницы
+    ax, ay, bx, by : int
+        координаты х и у пунктов А и В соответственно
+    final_way : list
+        продуманный мною путь для отрисовки
+    """
+
     x_choice, y_choice = [170, 1110], [180, 865]
     xy_choice = [[170, 180], [1110, 180], [170, 865], [1110, 865]]
     images = ["static/img/fruktovaya_floor1.jfif",
@@ -26,14 +50,14 @@ def navigator1(from_cab, to_cab):
     for image in images:
 
         if (str(point_a.floor) not in image[-11:]) and (str(point_b.floor) not in image[-11:]):
-            # если этаж не используется в маршруте
+            """ Попадаем сюда, если картинка не будет задействована в построении маршрута, изменений нет """
             with Image.open(image) as im:
                 image2 = image[:-5] + "(1).jfif"
                 im.save(image2)
 
         elif (str(point_a.floor) in image[-11:]) and (str(point_b.floor) in image[-11:]):
+            """ Попадаем сюда, если пункты А и В находятся на одном этаже """
             with Image.open(image) as im:
-                # если на одном этаже А и В
                 draw = ImageDraw.Draw(im)
                 ax, ay = point_a.x_coordinate, point_a.y_coordinate
                 bx, by = point_b.x_coordinate, point_b.y_coordinate
@@ -42,23 +66,35 @@ def navigator1(from_cab, to_cab):
                 coords = min_distance(ax, ay, xy_choice)
 
                 if xdiff < abs(1053 - 225 - 2) and 150 <= ay <= 785 and 150 <= by <= 785:
+                    """
+                    Попадаем, если движемся вдоль вертикальных (относительно карты) стен, находящихся в одном коридоре
+                    """
                     final_way = [(ax, ay), (coords[0], ay), (coords[0], by), (bx, by)]
                     draw.line(final_way, fill="RED", width=10)
-                    print("vertical", ax, ay, bx, by, coords, xdiff, abs(coords[0] - max(ax, bx) - 50))
+
                 elif 1020 >= ax >= 240 and 1020 >= bx >= 240 and ydiff < abs(912 - 140):
+                    """
+                    Попадаем, если движемся вдоль горизонтальных (относительно карты) стен, находящихся в одном коридоре
+                    """
                     final_way = [(ax, ay), (ax, coords[1]), (bx, coords[1]), (bx, by)]
                     draw.line(final_way, fill="RED", width=10)
-                    print("horizontal")
 
                 else:
-                    print("hard way")
-                    if point_a.floor == 1:
+
+                    if point_a.floor == 1:   # если находимся на первом этаже, то у нас особенные условия
+
                         leader1 = nearest("fruktovaya", bx, by)
+
                         if min_distance(ax, ay, [leader, [170, 865], [1110, 865]]) == leader and \
                                 min_distance(bx, by, [leader1, [170, 865], [1110, 865]]) == leader1:
+                            """ Попадаем, если проще будет пройти через другой этаж, нежели обходить всю школу """
                             coords, coords1 = min_distance(ax, ay, xy_choice), min_distance(bx, by, xy_choice)
-                            draw.line([(ax, ay), (coords[0], ay), (coords[0], coords[1]), (leader[0], leader[1])], fill="RED", width=10)
-                            draw.line([(bx, by), (coords1[0], by), (coords1[0], coords1[1]), (leader1[0], leader1[1])], fill="RED", width=10)
+
+                            draw.line([(ax, ay), (coords[0], ay), (coords[0], coords[1]), (leader[0], leader[1])],
+                                      fill="RED", width=10)
+                            draw.line([(bx, by), (coords1[0], by), (coords1[0], coords1[1]), (leader1[0], leader1[1])],
+                                      fill="RED", width=10)
+
                             with Image.open(images[1]) as im2:
                                 draw = ImageDraw.Draw(im2)
                                 draw.line([(leader[0], leader[1]), (leader1[0], leader1[1])], fill="RED", width=10)
@@ -69,48 +105,52 @@ def navigator1(from_cab, to_cab):
                             break
 
                         else:
+                            """ Попадаем, если проще обойти по первому этажу (прогулки - тоже неплохо) """
                             [ax, ay], [bx, by] = sorted([[ax, ay], [bx, by]], key=lambda j: j[0])
                             coords, coords1 = [170, 865], [1110, 865]
-                            final_way = [(ax, ay), (coords[0], ay), (coords[0], coords[1]), (coords1[0], coords1[1]), (coords1[0], by), (bx, by)]
+                            final_way = [(ax, ay), (coords[0], ay), (coords[0], coords[1]), (coords1[0], coords1[1]),
+                                         (coords1[0], by), (bx, by)]
+
                             draw.line(final_way, fill="RED", width=10)
 
-                    else:
+                    else:   # если находимся на 2 или  этаже
+
                         if (ax <= 225 or ax >= 1053) and (bx <= 225 or bx >= 1053):
+                            """ Попадаем, если путь от одной горизонтальной стены до другой горизонтальной стены """
                             coords1 = [x_choice[x_choice.index(coords[0]) - 1], coords[1]]
-                            print("1)", coords, coords1)
                             final_way = [(ax, ay), (coords[0], ay), (coords[0], coords[1]), (coords1[0], coords1[1]),
                                          (coords1[0], by), (bx, by)]
                         elif (ay <= 140 or ay >= 912) and (by <= 140 or by >= 912):
+                            """ Попадаем, если добираемся от одной вертикальной стены до другой вертикальной стены """
                             coords1 = [coords[0], y_choice[y_choice.index(coords[1]) - 1]]
-                            print("2)", coords, coords1)
                             final_way = [(ax, ay), (ax, coords[1]), (coords[0], coords[1]), (coords1[0], coords1[1]),
                                          (bx, coords1[1]), (bx, by)]
                         else:
+                            """ Попадаем при построении смешанного маршрута """
                             [ax, ay], [bx, by] = sorted([[ax, ay], [bx, by]], key=lambda j: j[0])
                             coords = min_distance((ax + bx) // 2, (ay + by) // 2, xy_choice)
-                            print("3)", coords, (ax, ay), (bx, by))
-                            if ax <= 225 or bx <= 225:
-                                final_way = [(ax, ay), (coords[0], ay), (coords[0], coords[1]), (bx, coords[1]), (bx, by)]
-                            else:
-                                final_way = [(ax, ay), (ax, coords[1]), (coords[0], coords[1]), (coords[0], by), (bx, by)]
+                            if ax <= 225 or bx <= 225:   # если двигаемся от левого коридора
+                                final_way = [(ax, ay), (coords[0], ay), (coords[0], coords[1]), (bx, coords[1]),
+                                             (bx, by)]
+                            else:   # если двигаемся от правого коридора
+                                final_way = [(ax, ay), (ax, coords[1]), (coords[0], coords[1]), (coords[0], by),
+                                             (bx, by)]
                         draw.line(final_way, fill="RED", width=10)
 
                 image2 = image[:-5] + "(1).jfif"
                 im.save(image2)
 
         elif str(point_a.floor) in image[-11:] and leader:
-            print("from A to leader")
+            """ Попадаем сюда, если обрабатываем картинку с этажом, на котором находится пункт А, ведём до лестницы """
             with Image.open(image) as im:
-                # довести от пункта А до лестницы
                 draw = ImageDraw.Draw(im)
                 x, y = point_a.x_coordinate, point_a.y_coordinate
 
                 coords = min_distance(leader[0], leader[1], xy_choice)
-                print(coords)
 
-                if x <= 225 or x >= 1053:
+                if x <= 225 or x >= 1053:   # если стартуем от вертикальных стен
                     final_way = [(x, y), (coords[0], y), (coords[0], coords[1]), (leader[0], coords[1]), (leader[0], leader[1])]
-                else:
+                else:   # если стартуем от горизонтальных стен
                     final_way = [(x, y), (x, leader[1]), (leader[0], leader[1])]
                 draw.line(final_way, fill="RED", width=10)
 
@@ -118,23 +158,21 @@ def navigator1(from_cab, to_cab):
                 im.save(image2)
 
         elif str(point_b.floor) in image[-11:] and leader:
-            print("from leader to B")
+            """ Попадаем сюда, если обрабатываем картинку с этажом, на котором находится пункт В, ведём от лестницы """
             with Image.open(image) as im:
-                # довести от лестницы до пункта В
                 draw = ImageDraw.Draw(im)
                 x, y = point_b.x_coordinate, point_b.y_coordinate
 
                 coords = min_distance(leader[0], leader[1], xy_choice)
                 print(coords)
 
-                if y <= 140 or y >= 912:
-                    print("ne simple")
+                if y <= 140 or y >= 912:   # если старт от горизонтальных стен
                     if coords[1] == min_distance(x, y, xy_choice)[1]:
                         final_way = [(x, y), (x, leader[1]), (leader[0], leader[1])]
                     else:
                         coords1 = [coords[0], y_choice[y_choice.index(coords[1]) - 1]]
                         final_way = [(x, y), (x, coords1[1]), (coords1[0], coords1[1]), (coords1[0], leader[1]), (leader[0], leader[1])]
-                else:
+                else:   # если старт от вертикальных стен
                     if abs(leader[0] - x) > abs(1053 - 225):
                         coords1 = [x_choice[x_choice.index(coords[0]) - 1], coords[1]]
                         final_way = [(x, y), (coords1[0], y), (coords1[0], coords1[1]), (leader[0], leader[1])]
@@ -144,6 +182,7 @@ def navigator1(from_cab, to_cab):
 
                 image2 = image[:-5] + "(1).jfif"
                 im.save(image2)
+
     return f"""<img src="/static/img/fruktovaya_floor1(1).jfif" alt="...">
                 <img src="/static/img/fruktovaya_floor2(1).jfif" alt="...">
                 <img src="/static/img/fruktovaya_floor3(1).jfif" alt="...">
@@ -162,18 +201,130 @@ def navigator2(from_cab, to_cab):
 
 @app.route("/krivorozhskaya/<from_cab>/<to_cab>", methods=['GET', 'POST'])
 def navigator3(from_cab, to_cab):
+    """
+    Построение маршрутов. Здание по адресу Фруктовая ул., д.9
+
+    Атрибуты
+    --------
+    from_cab : str
+        название/номер пункта отправления (далее - пункта А)
+    to_cab : str
+        название/номер пункта назначения (далее - пункта В)
+    xy_choice : list
+        список координат поворотов
+    images : list
+        список путей к картинкам с картами этажей здания школы на Фруктовой
+    exceptions : list
+        исключения (кабинеты с особыми маршрутами)
+    leader : list
+        координаты ближайшей к пункту А лестницы
+    ax, ay, bx, by : int
+        координаты х и у пунктов А и В соответственно
+    final_way : list
+        продуманный мною путь для отрисовки
+    """
+    xy_choice = [[220, 730], [640, 730], [1140, 730]]
+    images = ["static/img/krivorozhskaya_floor1.jfif",
+              "static/img/krivorozhskaya_floor2.jfif",
+              "static/img/krivorozhskaya_floor3.jfif"]
+    exceptions = ["Спортзал", "Актовый зал"]
     db_sess = db_session.create_session()
     point_a = db_sess.query(Krivorozhskaya).filter(Krivorozhskaya.name_or_number == from_cab).first()
     point_b = db_sess.query(Krivorozhskaya).filter(Krivorozhskaya.name_or_number == to_cab).first()
-    if point_a.floor != point_b.floor:
-        leader = nearest("krivorozhskaya", point_a.x_coordinate, point_a.y_coordinate)
-    return f'go away... okay, you are going from {point_a.name_or_number} to {point_b.name_or_number}'
+    leader = nearest("krivorozhskaya", point_a.x_coordinate, point_a.y_coordinate)
+
+    for image in images:
+
+        if (str(point_a.floor) not in image[-11:]) and (str(point_b.floor) not in image[-11:]):
+            """ Попадаем сюда, если картинка не будет задействована в построении маршрута, изменений нет """
+            with Image.open(image) as im:
+                image2 = image[:-5] + "(1).jfif"
+                im.save(image2)
+
+        elif (str(point_a.floor) in image[-11:]) and (str(point_b.floor) in image[-11:]) and \
+                (from_cab not in exceptions) and (to_cab not in exceptions):
+            """ Попадаем сюда, если пункты А и В находятся на одном этаже и среди них нет исключений """
+            with Image.open(image) as im:
+                draw = ImageDraw.Draw(im)
+                ax, ay = point_a.x_coordinate, point_a.y_coordinate
+                bx, by = point_b.x_coordinate, point_b.y_coordinate
+
+                final_way = [(ax, ay), (ax, xy_choice[1][1]), (bx, xy_choice[1][1]), (bx, by)]
+                draw.line(final_way, fill="RED", width=8)
+
+                image2 = image[:-5] + "(1).jfif"
+                im.save(image2)
+
+        elif str(point_a.floor) in image[-11:] and leader and \
+                (from_cab not in exceptions) and (to_cab not in exceptions):
+            """
+            Попадаем сюда, если обрабатываем картинку с этажом, на котором находится пункт А, и ни один из пунктов не 
+            является исключением, ведём до лестницы
+            """
+            with Image.open(image) as im:
+                draw = ImageDraw.Draw(im)
+                x, y = point_a.x_coordinate, point_a.y_coordinate
+
+                final_way = [(x, y), (x, xy_choice[1][1]), (leader[0], xy_choice[1][1]), (leader[0], leader[1])]
+                draw.line(final_way, fill="RED", width=10)
+
+                image2 = image[:-5] + "(1).jfif"
+                im.save(image2)
+
+        elif str(point_b.floor) in image[-11:] and leader and \
+                (from_cab not in exceptions) and (to_cab not in exceptions):
+            """
+            Попадаем сюда, если обрабатываем картинку с этажом, на котором находится пункт В, и ни один из пунктов не 
+            является исключением, ведём от лестницы
+            """
+            with Image.open(image) as im:
+                draw = ImageDraw.Draw(im)
+                x, y = point_b.x_coordinate, point_b.y_coordinate
+
+                final_way = [(x, y), (x, xy_choice[1][1]), (leader[0], xy_choice[1][1]), (leader[0], leader[1])]
+                draw.line(final_way, fill="RED", width=10)
+
+                image2 = image[:-5] + "(1).jfif"
+                im.save(image2)
+        else:
+            """ Попадаем сюда, если один из пунктов является исключением """
+            with Image.open(image) as im:
+                draw = ImageDraw.Draw(im)
+                x, y = point_b.x_coordinate, point_b.y_coordinate
+
+                # in progress...
+                final_way = [(x, y), (x, xy_choice[1][1]), (leader[0], xy_choice[1][1]), (leader[0], leader[1])]
+                draw.line(final_way, fill="RED", width=10)
+
+                image2 = image[:-5] + "(1).jfif"
+                im.save(image2)
+
+    return f"""<img src="/static/img/krivorozhskaya_floor1(1).jfif" alt="...">
+                <img src="/static/img/krivorozhskaya_floor2(1).jfif" alt="...">
+                <img src="/static/img/krivorozhskaya_floor3(1).jfif" alt="...">
+                <h2>go away... okay, you are going from {point_a.name_or_number} to {point_b.name_or_number}</h2>"""
 
 
 def nearest(school, x, y):
+    """
+    Метод поиска ближайшей лестницы относительно заданных координат
+
+    Атрибуты
+    --------
+    school : str
+        название школы, в которой будем проводить поиск ближайшей лестницы
+    x : int
+        координата х точки
+    y : int
+        координата у точки
+    leaders : dict
+        словарь, в котором каждой школе соответствует список координат её лестниц
+
+    :return : возвращает координаты ближайшей лестницы
+    """
     leaders = {"fruktovaya": [[120, 180], [1160, 180], [120, 865], [1160, 865]],
                "chongarskaya": [[1, 1], [1, 1], [1, 1], [1, 1]],
-               "krivorozhskaya": [[1, 1], [1, 1], [1, 1], [1, 1]]}
+               "krivorozhskaya": [[435, 707], [860, 707]]}
     minxdiff, minydiff = 2000, 2000
     choice = leaders[school]
     for x1, y1 in choice:
@@ -185,6 +336,20 @@ def nearest(school, x, y):
 
 
 def min_distance(x, y, iterable):
+    """
+    Метод поиска ближайшей точки из списка к заданной точке
+
+    Атрибуты
+    --------
+    x : int
+        координата х точки
+    y : int
+        координата у точки
+    iterable : list
+        список точек, из которых нужно выбрать ближайшую
+
+    :return : возвращает координаты ближайшей точки
+    """
     list_of_distances = list(map(lambda t: sqrt(pow(t[0] - x, 2) + pow(t[1] - y, 2)), iterable))
     min_res = min(list_of_distances)
     index_of_min = list_of_distances.index(min_res)
@@ -192,6 +357,7 @@ def min_distance(x, y, iterable):
 
 
 def main():
+    """ Функция запуска приложения """
     db_session.global_init("db/classrooms.db")
     name_db = 'classrooms.db'
     db_session.global_init(f"db/{name_db}")
