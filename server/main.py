@@ -37,7 +37,11 @@ def navigator1(from_cab, to_cab):
         продуманный мною путь для отрисовки
     """
 
-    from_cab, to_cab = from_cab.capitalize(), to_cab.capitalize()
+    if not from_cab.isdigit() and from_cab[:-1] not in ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"]:
+        from_cab = from_cab.capitalize()
+    if not to_cab.isdigit() and to_cab[:-1] not in ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"]:
+        to_cab = to_cab.capitalize()
+
     x_choice, y_choice = [170, 1110], [180, 865]
     xy_choice = [[170, 180], [1110, 180], [170, 865], [1110, 865]]
     images = ["static/img/fruktovaya_floor1.jfif",
@@ -106,6 +110,23 @@ def navigator1(from_cab, to_cab):
                             im.save(image2)
                             break
 
+                        elif 225 < ax < 1051 or 225 < bx < 1051:
+                            """ Попадаем, если один из пунктов находится по горизонтали """
+                            if 225 < ax < 1051 and not (225 < bx < 1051):
+                                # если пункт А по горизонтали
+                                coords = min_distance(bx, by, [[170, 865], [1110, 865]])
+                                final_way = [(ax, ay), (ax, coords[1]), (coords[0], coords[1]),
+                                             (coords[0], by), (bx, by)]
+                            elif 225 < bx < 1051 and not (225 < ax < 1051):
+                                # если пункт В по горизонтали
+                                coords = min_distance(ax, ay, [[170, 865], [1110, 865]])
+                                final_way = [(bx, by), (bx, coords[1]), (coords[0], coords[1]),
+                                             (coords[0], ay), (ax, ay)]
+                            else:
+                                # если оба по горизонтали
+                                final_way = [(ax, ay), (ax, 865), (bx, 865), (bx, by)]
+                            draw.line(final_way, fill="RED", width=10)
+
                         else:
                             """ Попадаем, если проще обойти по первому этажу (прогулки - тоже неплохо) """
                             [ax, ay], [bx, by] = sorted([[ax, ay], [bx, by]], key=lambda j: j[0])
@@ -115,7 +136,7 @@ def navigator1(from_cab, to_cab):
 
                             draw.line(final_way, fill="RED", width=10)
 
-                    else:   # если находимся на 2 или  этаже
+                    else:   # если находимся на 2 или 3 этаже
 
                         if (ax <= 225 or ax >= 1053) and (bx <= 225 or bx >= 1053):
                             """ Попадаем, если путь от одной горизонтальной стены до другой горизонтальной стены """
@@ -189,17 +210,97 @@ def navigator1(from_cab, to_cab):
 
     return f"""<img src="/static/img/fruktovaya_floor1(1).jfif" alt="...">
                 <img src="/static/img/fruktovaya_floor2(1).jfif" alt="...">
-                <img src="/static/img/fruktovaya_floor3(1).jfif" alt="...">
-                <h2>go away... okay, you are going from {point_a.name_or_number} to {point_b.name_or_number}</h2>"""
+                <img src="/static/img/fruktovaya_floor3(1).jfif" alt="...">"""
 
 
 @app.route("/chongarskaya/<from_cab>/<to_cab>", methods=['GET', 'POST'])
 def navigator2(from_cab, to_cab):
+    """
+    Построение маршрутов. Здание по адресу Фруктовая ул., д.9
+
+    Атрибуты
+    --------
+    from_cab : str
+        название/номер пункта отправления (далее - пункта А)
+    to_cab : str
+        название/номер пункта назначения (далее - пункта В)
+    xy_choice : list
+        список координат поворотов
+    images : list
+        список путей к картинкам с картами этажей здания школы на Фруктовой
+    leader : list
+        координаты ближайшей к пункту А лестницы
+    ax, ay, bx, by : int
+        координаты х и у пунктов А и В соответственно
+    final_way : list
+        продуманный мною путь для отрисовки
+    """
+
+    if not from_cab.isdigit() and from_cab[:-1] not in ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"]:
+        from_cab = from_cab.capitalize()
+    if not to_cab.isdigit() and to_cab[:-1] not in ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"]:
+        to_cab = to_cab.capitalize()
+
+    xy_choice = [[220, 730], [640, 730]]
+    images = ["static/img/chongarskaya_floor1.jfif",
+              "static/img/chongarskaya_floor2.jfif",
+              "static/img/chongarskaya_floor3.jfif",
+              "static/img/chongarskaya_floor4.jfif",
+              "static/img/chongarskaya_floor5.jfif"]
     db_sess = db_session.create_session()
     point_a = db_sess.query(Chongarskaya).filter(Chongarskaya.name_or_number == from_cab).first()
     point_b = db_sess.query(Chongarskaya).filter(Chongarskaya.name_or_number == to_cab).first()
     leader = nearest("chongarskaya", point_a.x_coordinate, point_a.y_coordinate)
-    return f'go away... okay, you are going from {point_a.name_or_number} to {point_b.name_or_number} by {leader}'
+
+    for image in images:
+        if (str(point_a.floor) not in image[-11:]) and (str(point_b.floor) not in image[-11:]):
+            """ Попадаем сюда, если картинка не будет задействована в построении маршрута, изменений нет """
+            with Image.open(image) as im:
+                image2 = image[:-5] + "(1).jfif"
+                im.save(image2)
+
+        elif (str(point_a.floor) in image[-11:]) and (str(point_b.floor) in image[-11:]):
+            """ Попадаем сюда, если пункты А и В находятся на одном этаже """
+            with Image.open(image) as im:
+                draw = ImageDraw.Draw(im)
+                ax, ay = point_a.x_coordinate, point_a.y_coordinate
+                bx, by = point_b.x_coordinate, point_b.y_coordinate
+
+                final_way = [(ax, ay), (ax, xy_choice[1][1]), (bx, xy_choice[1][1]), (bx, by)]
+                draw.line(final_way, fill="RED", width=8)
+
+                image2 = image[:-5] + "(1).jfif"
+                im.save(image2)
+
+        elif str(point_a.floor) in image[-11:] and leader:
+            """ Попадаем сюда, если обрабатываем картинку с этажом, на котором находится пункт А, ведём до лестницы """
+            with Image.open(image) as im:
+                draw = ImageDraw.Draw(im)
+                x, y = point_a.x_coordinate, point_a.y_coordinate
+
+                final_way = [(x, y), (x, xy_choice[1][1]), (leader[0], xy_choice[1][1]), (leader[0], leader[1])]
+                draw.line(final_way, fill="RED", width=8)
+
+                image2 = image[:-5] + "(1).jfif"
+                im.save(image2)
+
+        elif str(point_b.floor) in image[-11:] and leader:
+            """ Попадаем сюда, если обрабатываем картинку с этажом, на котором находится пункт В, ведём от лестницы """
+            with Image.open(image) as im:
+                draw = ImageDraw.Draw(im)
+                x, y = point_b.x_coordinate, point_b.y_coordinate
+
+                final_way = [(x, y), (x, xy_choice[1][1]), (leader[0], xy_choice[1][1]), (leader[0], leader[1])]
+                draw.line(final_way, fill="RED", width=8)
+
+                image2 = image[:-5] + "(1).jfif"
+                im.save(image2)
+
+    return f"""<img src="/static/img/chongarskaya_floor1(1).jfif" alt="...">
+                <img src="/static/img/chongarskaya_floor2(1).jfif" alt="...">
+                <img src="/static/img/chongarskaya_floor3(1).jfif" alt="...">
+                <img src="/static/img/chongarskaya_floor4(1).jfif" alt="...">
+                <img src="/static/img/chongarskaya_floor5(1).jfif" alt="...">"""
 
 
 @app.route("/krivorozhskaya/<from_cab>/<to_cab>", methods=['GET', 'POST'])
@@ -227,7 +328,11 @@ def navigator3(from_cab, to_cab):
         продуманный мною путь для отрисовки
     """
 
-    from_cab, to_cab = from_cab.capitalize(), to_cab.capitalize()
+    if not from_cab.isdigit() and from_cab[:-1] not in ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"]:
+        from_cab = from_cab.capitalize()
+    if not to_cab.isdigit() and to_cab[:-1] not in ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"]:
+        to_cab = to_cab.capitalize()
+
     xy_choice = [[220, 730], [640, 730], [1140, 730]]
     images = ["static/img/krivorozhskaya_floor1.jfif",
               "static/img/krivorozhskaya_floor2.jfif",
@@ -295,6 +400,12 @@ def navigator3(from_cab, to_cab):
             """ Попадаем сюда, если один из пунктов является исключением """
             ax, ay = point_a.x_coordinate, point_a.y_coordinate
             bx, by = point_b.x_coordinate, point_b.y_coordinate
+
+            for image_ in images:
+                """ Подчищаем все старые каракули """
+                with Image.open(image_) as im:
+                    image2 = image_[:-5] + "(1).jfif"
+                    im.save(image2)
 
             if from_cab in exceptions and to_cab in exceptions:
                 """ Попадаем, если оба пункта являются исключениями """
@@ -380,8 +491,7 @@ def navigator3(from_cab, to_cab):
 
     return f"""<img src="/static/img/krivorozhskaya_floor1(1).jfif" alt="...">
                 <img src="/static/img/krivorozhskaya_floor2(1).jfif" alt="...">
-                <img src="/static/img/krivorozhskaya_floor3(1).jfif" alt="...">
-                <h2>go away... okay, you are going from {point_a.name_or_number} to {point_b.name_or_number}</h2>"""
+                <img src="/static/img/krivorozhskaya_floor3(1).jfif" alt="...">"""
 
 
 def nearest(school, x, y):
