@@ -37,6 +37,7 @@ def navigator1(from_cab, to_cab):
         продуманный мною путь для отрисовки
     """
 
+    from_cab, to_cab = from_cab.capitalize(), to_cab.capitalize()
     x_choice, y_choice = [170, 1110], [180, 865]
     xy_choice = [[170, 180], [1110, 180], [170, 865], [1110, 865]]
     images = ["static/img/fruktovaya_floor1.jfif",
@@ -86,7 +87,8 @@ def navigator1(from_cab, to_cab):
                         leader1 = nearest("fruktovaya", bx, by)
 
                         if min_distance(ax, ay, [leader, [170, 865], [1110, 865]]) == leader and \
-                                min_distance(bx, by, [leader1, [170, 865], [1110, 865]]) == leader1:
+                                min_distance(bx, by, [leader1, [170, 865], [1110, 865]]) == leader1 and \
+                                leader[0] == 180 and leader1[0] == 180:
                             """ Попадаем, если проще будет пройти через другой этаж, нежели обходить всю школу """
                             coords, coords1 = min_distance(ax, ay, xy_choice), min_distance(bx, by, xy_choice)
 
@@ -149,7 +151,8 @@ def navigator1(from_cab, to_cab):
                 coords = min_distance(leader[0], leader[1], xy_choice)
 
                 if x <= 225 or x >= 1053:   # если стартуем от вертикальных стен
-                    final_way = [(x, y), (coords[0], y), (coords[0], coords[1]), (leader[0], coords[1]), (leader[0], leader[1])]
+                    final_way = [(x, y), (coords[0], y), (coords[0], coords[1]), (leader[0], coords[1]),
+                                 (leader[0], leader[1])]
                 else:   # если стартуем от горизонтальных стен
                     final_way = [(x, y), (x, leader[1]), (leader[0], leader[1])]
                 draw.line(final_way, fill="RED", width=10)
@@ -171,7 +174,8 @@ def navigator1(from_cab, to_cab):
                         final_way = [(x, y), (x, leader[1]), (leader[0], leader[1])]
                     else:
                         coords1 = [coords[0], y_choice[y_choice.index(coords[1]) - 1]]
-                        final_way = [(x, y), (x, coords1[1]), (coords1[0], coords1[1]), (coords1[0], leader[1]), (leader[0], leader[1])]
+                        final_way = [(x, y), (x, coords1[1]), (coords1[0], coords1[1]), (coords1[0], leader[1]),
+                                     (leader[0], leader[1])]
                 else:   # если старт от вертикальных стен
                     if abs(leader[0] - x) > abs(1053 - 225):
                         coords1 = [x_choice[x_choice.index(coords[0]) - 1], coords[1]]
@@ -194,9 +198,8 @@ def navigator2(from_cab, to_cab):
     db_sess = db_session.create_session()
     point_a = db_sess.query(Chongarskaya).filter(Chongarskaya.name_or_number == from_cab).first()
     point_b = db_sess.query(Chongarskaya).filter(Chongarskaya.name_or_number == to_cab).first()
-    if point_a.floor != point_b.floor:
-        leader = nearest("chongarskaya", point_a.x_coordinate, point_a.y_coordinate)
-    return f'go away... okay, you are going from {point_a.name_or_number} to {point_b.name_or_number}'
+    leader = nearest("chongarskaya", point_a.x_coordinate, point_a.y_coordinate)
+    return f'go away... okay, you are going from {point_a.name_or_number} to {point_b.name_or_number} by {leader}'
 
 
 @app.route("/krivorozhskaya/<from_cab>/<to_cab>", methods=['GET', 'POST'])
@@ -223,6 +226,8 @@ def navigator3(from_cab, to_cab):
     final_way : list
         продуманный мною путь для отрисовки
     """
+
+    from_cab, to_cab = from_cab.capitalize(), to_cab.capitalize()
     xy_choice = [[220, 730], [640, 730], [1140, 730]]
     images = ["static/img/krivorozhskaya_floor1.jfif",
               "static/img/krivorozhskaya_floor2.jfif",
@@ -266,7 +271,7 @@ def navigator3(from_cab, to_cab):
                 x, y = point_a.x_coordinate, point_a.y_coordinate
 
                 final_way = [(x, y), (x, xy_choice[1][1]), (leader[0], xy_choice[1][1]), (leader[0], leader[1])]
-                draw.line(final_way, fill="RED", width=10)
+                draw.line(final_way, fill="RED", width=8)
 
                 image2 = image[:-5] + "(1).jfif"
                 im.save(image2)
@@ -282,22 +287,96 @@ def navigator3(from_cab, to_cab):
                 x, y = point_b.x_coordinate, point_b.y_coordinate
 
                 final_way = [(x, y), (x, xy_choice[1][1]), (leader[0], xy_choice[1][1]), (leader[0], leader[1])]
-                draw.line(final_way, fill="RED", width=10)
+                draw.line(final_way, fill="RED", width=8)
 
                 image2 = image[:-5] + "(1).jfif"
                 im.save(image2)
         else:
             """ Попадаем сюда, если один из пунктов является исключением """
-            with Image.open(image) as im:
-                draw = ImageDraw.Draw(im)
-                x, y = point_b.x_coordinate, point_b.y_coordinate
+            ax, ay = point_a.x_coordinate, point_a.y_coordinate
+            bx, by = point_b.x_coordinate, point_b.y_coordinate
 
-                # in progress...
-                final_way = [(x, y), (x, xy_choice[1][1]), (leader[0], xy_choice[1][1]), (leader[0], leader[1])]
-                draw.line(final_way, fill="RED", width=10)
-
-                image2 = image[:-5] + "(1).jfif"
+            if from_cab in exceptions and to_cab in exceptions:
+                """ Попадаем, если оба пункта являются исключениями """
+                with Image.open(images[point_a.floor - 1]) as im:
+                    draw = ImageDraw.Draw(im)
+                    final_way = [(ax, ay), (bx, by)]
+                    draw.line(final_way, fill="RED", width=8)
+                image2 = images[point_a.floor - 1][:-5] + "(1).jfif"
                 im.save(image2)
+                break
+
+            else:
+                """ Попадаем, если только один пункт является исключением, назначаем его пунктом А """
+                floor_a, floor_b = point_a.floor, point_b.floor
+                old = [[ax, ay], [bx, by]]
+                [ax, ay], [bx, by] = sorted(old, key=lambda j: j[1])
+                if [[ax, ay], [bx, by]] != old:
+                    floor_a, floor_b = floor_b, floor_a
+                leader = nearest("krivorozhskaya", bx, by)
+                leader0 = [640, 50]
+
+                if floor_b == floor_a:
+                    """ Попадаем, если оба пункта находятся на 2 этаже """
+                    with Image.open(images[floor_a - 1]) as im:
+                        draw = ImageDraw.Draw(im)
+                        final_way = [(bx, by), (bx, xy_choice[1][1]), (leader[0], xy_choice[1][1]),
+                                     (leader[0], leader[1])]
+                        draw.line(final_way, fill="RED", width=8)
+                        final_way = [(ax, ay), (leader0[0], ay), (leader0[0], leader0[1])]
+                        draw.line(final_way, fill="RED", width=8)
+                    image2 = images[floor_a - 1][:-5] + "(1).jfif"
+                    im.save(image2)
+
+                    with Image.open(images[0]) as im:
+                        draw = ImageDraw.Draw(im)
+                        final_way = [(leader[0], leader[1]), (leader[0], xy_choice[1][1]),
+                                     (leader0[0], xy_choice[1][1]), (leader0[0], leader0[1])]
+                        draw.line(final_way, fill="RED", width=8)
+                    image2 = images[0][:-5] + "(1).jfif"
+                    im.save(image2)
+                    break
+
+                else:
+                    """ Попадаем во всех остальных случаях """
+                    leader = nearest("krivorozhskaya", bx, by)
+                    leader0 = [640, 50]
+
+                    with Image.open(images[floor_a - 1]) as im:
+                        draw = ImageDraw.Draw(im)
+                        final_way = [(ax, ay), (leader0[0], ay), (leader0[0], leader0[1])]
+                        draw.line(final_way, fill="RED", width=8)
+                    image2 = images[floor_a - 1][:-5] + "(1).jfif"
+                    im.save(image2)
+
+                    if floor_b == 1:
+                        """ Попадаем, если пункт В находится на 1 этаже """
+                        with Image.open(images[0]) as im:
+                            draw = ImageDraw.Draw(im)
+                            final_way = [(bx, by), (bx, xy_choice[1][1]), (leader0[0], xy_choice[1][1]),
+                                         (leader0[0], leader0[1])]
+                            draw.line(final_way, fill="RED", width=8)
+                        image2 = images[0][:-5] + "(1).jfif"
+                        im.save(image2)
+                        break
+                    else:
+                        """ Попадаем, если пункт В находится на 3 этаже """
+                        with Image.open(images[0]) as im:
+                            draw = ImageDraw.Draw(im)
+                            final_way = [(leader[0], leader[1]), (leader[0], xy_choice[1][1]),
+                                         (leader0[0], xy_choice[1][1]), (leader0[0], leader0[1])]
+                            draw.line(final_way, fill="RED", width=8)
+                        image2 = images[0][:-5] + "(1).jfif"
+                        im.save(image2)
+
+                        with Image.open(images[floor_b - 1]) as im:
+                            draw = ImageDraw.Draw(im)
+                            final_way = [(bx, by), (bx, xy_choice[1][1]), (leader[0], xy_choice[1][1]),
+                                         (leader[0], leader[1])]
+                            draw.line(final_way, fill="RED", width=8)
+                        image2 = images[floor_b - 1][:-5] + "(1).jfif"
+                        im.save(image2)
+                        break
 
     return f"""<img src="/static/img/krivorozhskaya_floor1(1).jfif" alt="...">
                 <img src="/static/img/krivorozhskaya_floor2(1).jfif" alt="...">
