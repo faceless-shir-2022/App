@@ -50,9 +50,9 @@ class Adress extends StatelessWidget {
               alignment: Alignment.center,
               child: ElevatedButton(
                 onPressed: () {
-                  showDialog(context: context, builder: (_) => DialogExample());
-                  // Navigator.pushNamed(
-                  //     context, '/second/Чонгарская/1/nosearch//');
+                  // showDialog(context: context, builder: (_) => DialogExample());
+                  Navigator.pushNamed(
+                      context, '/second/Чонгарская/1/nosearch//');
                 },
                 child: Text('Чонгарская'),
               ),
@@ -69,9 +69,9 @@ class Adress extends StatelessWidget {
               alignment: Alignment.bottomCenter,
               child: ElevatedButton(
                 onPressed: () {
-                  showDialog(context: context, builder: (_) => DialogExample());
-                  // Navigator.pushNamed(
-                  //     context, '/second/Криворожская/1/nosearch//');
+                  // showDialog(context: context, builder: (_) => DialogExample());
+                  Navigator.pushNamed(
+                      context, '/second/Криворожская/1/nosearch//');
                 },
                 child: Text('Криворожская'),
               ),

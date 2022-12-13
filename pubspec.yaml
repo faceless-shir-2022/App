@@ -36,8 +36,10 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
+  http: ^0.13.5
 
 dev_dependencies:
+  flutter_launcher_icons: ^0.11.0
   flutter_test:
     sdk: flutter
 
@@ -48,6 +50,10 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
 
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/icons/icon.webp"
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
@@ -68,6 +74,18 @@ flutter:
     - assets/image/fruktovaya/2.jpg
     - assets/image/fruktovaya/3.jpg
     - assets/classes.txt
+    - assets/image/krivorozhskaya/1.jpg
+    - assets/image/krivorozhskaya/2.jpg
+    - assets/image/krivorozhskaya/3.jpg
+    - assets/image/chongarskaya/1.jpg
+    - assets/image/chongarskaya/2.jpg
+    - assets/image/chongarskaya/3.jpg
+    - assets/image/chongarskaya/4.jpg
+    - assets/image/chongarskaya/5.jpg
+    - assets/
+    - assets/icons/
+    - assets/icons/icon.webp
+
     
 
   # An image asset can refer to one or more resolution-specific "variants", see

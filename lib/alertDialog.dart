@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/DropDownClass.dart';
+import 'package:http/http.dart' as http;
 
 class DialogExample extends StatelessWidget {
   const DialogExample({super.key});
@@ -11,7 +13,7 @@ class DialogExample extends StatelessWidget {
       actions: <Widget>[
         TextButton(
           onPressed: () {
-            Navigator.pushNamed(context, '/first');
+            Navigator.pop(context);
           },
           child: const Text('OK'),
         ),
@@ -32,9 +34,9 @@ class DialogWrongData extends StatelessWidget {
       actions: <Widget>[
         TextButton(
           onPressed: () {
-            Navigator.pushNamed(context, '/second/Фруктовая/1/nosearch//');
+            Navigator.pop(context);
           },
-          child: const Text('OK'),
+          child: const Text('ok'),
         ),
       ],
     );
@@ -66,6 +68,45 @@ class RulesOfUsing extends StatelessWidget {
             Navigator.pushNamed(context, '/first');
           },
           child: const Text('OK'),
+        ),
+      ],
+    );
+  }
+}
+
+class Checkroom extends StatelessWidget {
+  const Checkroom({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Введите ваш класс'),
+      content: const Text(
+          'Пожалуйста, выбирайте ваш класс, для более точного маршрута от раздевалок'),
+      actions: <Widget>[
+        Container(
+          padding: const EdgeInsets.only(top: 10),
+          child: const Text('Выберите класс:'),
+        ),
+        Container(
+          alignment: Alignment.topCenter,
+          child: const DropdownButtonExample(),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: const Text('Отмена'),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+            //  http.get(Uri.parse(
+            //                   'http://tortik13.pythonanywhere.com/krivorozhskaya/$_startA/$_finishB'));
+            //               Navigator.pushNamed(context,
+            //                   '/second/$_id/$_img/$_isSearch/$_startA/$_finishB');
+          },
+          child: const Text('ok'),
         ),
       ],
     );

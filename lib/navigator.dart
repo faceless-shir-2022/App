@@ -57,6 +57,7 @@ class Navigator1 extends StatelessWidget {
                   child: AutocompleteBasicExample(
                     myText: _startA,
                     controller_2: A,
+                    schoolAdress: _id,
                   ),
                 ),
                 Container(
@@ -68,6 +69,7 @@ class Navigator1 extends StatelessWidget {
                   child: AutocompleteBasicExample(
                     myText: _finishB,
                     controller_2: B,
+                    schoolAdress: _id,
                   ),
                 ),
                 Container(
@@ -96,23 +98,60 @@ class Navigator1 extends StatelessWidget {
                               Navigator.pushNamed(context,
                                   '/second/$_id/3/$_isSearch/$_startA/$_finishB');
                             },
-                            child: const Text('3'))
+                            child: const Text('3')),
+                        if (_id == 'Чонгарская') ...[
+                          ElevatedButton(
+                              onPressed: () {
+                                Navigator.pushNamed(context,
+                                    '/second/$_id/4/$_isSearch/$_startA/$_finishB');
+                              },
+                              child: const Text('4')),
+                          ElevatedButton(
+                              onPressed: () {
+                                Navigator.pushNamed(context,
+                                    '/second/$_id/5/$_isSearch/$_startA/$_finishB');
+                              },
+                              child: const Text('5')),
+                        ],
                       ]),
                 ),
                 // Container(
                 //   child: Image.network("ссылка на пикчу не готова"),
                 // ),
-                if (_isSearch == 'nosearch') ...[
+                if (_isSearch == 'nosearch' && _id == 'Фруктовая') ...[
                   Container(
                     alignment: Alignment.center,
                     child: Image.asset("assets/image/fruktovaya/$_img.jpg"),
                   ),
-                ] else ...[
+                ] else if (_isSearch == 'search' && _id == 'Фруктовая') ...[
                   Container(
                     alignment: Alignment.center,
                     child: Image.network(
                         "http://tortik13.pythonanywhere.com/static/img/fruktovaya_floor$_img(1).jfif"),
-                  )
+                  ),
+                ] else if (_isSearch == 'nosearch' && _id == 'Чонгарская') ...[
+                  Container(
+                    alignment: Alignment.center,
+                    child: Image.asset("assets/image/chongarskaya/$_img.jpg"),
+                  ),
+                ] else if (_isSearch == 'search' && _id == 'Чонгарская') ...[
+                  Container(
+                    alignment: Alignment.center,
+                    child: Image.network(
+                        "http://tortik13.pythonanywhere.com/static/img/chongarskaya_floor$_img(1).jfif"),
+                  ),
+                ] else if (_isSearch == 'nosearch' &&
+                    _id == 'Криворожская') ...[
+                  Container(
+                    alignment: Alignment.center,
+                    child: Image.asset("assets/image/krivorozhskaya/$_img.jpg"),
+                  ),
+                ] else if (_isSearch == 'search' && _id == 'Криворожская') ...[
+                  Container(
+                    alignment: Alignment.center,
+                    child: Image.network(
+                        "http://tortik13.pythonanywhere.com/static/img/krivorozhskaya_floor$_img(1).jfif"),
+                  ),
                 ],
                 const Text('Вы ищите путь...')
               ],
@@ -156,12 +195,26 @@ class Navigator1 extends StatelessWidget {
                         showDialog(
                             context: context,
                             builder: (_) => DialogWrongData());
-                      } else {
+                      } else if (_startA == '100' || _finishB == 'Раздевалка') {
+                        showDialog(
+                            context: context, builder: (_) => Checkroom());
+                      } else if (_id == 'Фруктовая') {
                         http.get(Uri.parse(
                             'http://tortik13.pythonanywhere.com/fruktovaya/$_startA/$_finishB'));
                         Navigator.pushNamed(context,
                             '/second/$_id/$_img/$_isSearch/$_startA/$_finishB');
+                      } else if (_id == 'Чонгарская') {
+                        http.get(Uri.parse(
+                            'http://tortik13.pythonanywhere.com/chongarskaya/$_startA/$_finishB'));
+                        Navigator.pushNamed(context,
+                            '/second/$_id/$_img/$_isSearch/$_startA/$_finishB');
+                      } else if (_id == 'Криворожская') {
+                        http.get(Uri.parse(
+                            'http://tortik13.pythonanywhere.com/krivorozhskaya/$_startA/$_finishB'));
+                        Navigator.pushNamed(context,
+                            '/second/$_id/$_img/$_isSearch/$_startA/$_finishB');
                       }
+
                       imageCache.clear();
                       imageCache.clearLiveImages();
                       // 'http://tortik13.pythonanywhere.com/fruktovaya/$_startA/$_finishB'));
