@@ -17,7 +17,7 @@ class Adress extends StatelessWidget {
           ),
         ],
       ),
-      body: Center(
+      body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
             Container(

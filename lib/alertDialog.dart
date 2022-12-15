@@ -75,7 +75,8 @@ class RulesOfUsing extends StatelessWidget {
 }
 
 class Checkroom extends StatelessWidget {
-  const Checkroom({super.key});
+  final adress;
+  const Checkroom({super.key, this.adress});
 
   @override
   Widget build(BuildContext context) {
@@ -100,7 +101,7 @@ class Checkroom extends StatelessWidget {
         ),
         TextButton(
           onPressed: () {
-            Navigator.pop(context);
+            // Navigator.pop(context);
             //  http.get(Uri.parse(
             //                   'http://tortik13.pythonanywhere.com/krivorozhskaya/$_startA/$_finishB'));
             //               Navigator.pushNamed(context,

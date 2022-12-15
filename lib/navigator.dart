@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Authocompleater.dart';
 import 'package:flutter_application_1/alertDialog.dart';
 import 'package:http/http.dart' as http;
+import 'package:assorted_layout_widgets/assorted_layout_widgets.dart';
 
 class Navigator1 extends StatelessWidget {
   final String _id;
@@ -78,43 +79,72 @@ class Navigator1 extends StatelessWidget {
                 ),
                 Container(
                   alignment: Alignment.bottomCenter,
-                  child: ButtonBar(
-                      alignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
+                  child: ButtonBarSuper(
+                    wrapType: WrapType.balanced,
+                    wrapFit: WrapFit.divided,
+                    spacing: 1,
+                    buttonHeight: 30,
+                    buttonMinWidth: 10,
+                    children: <Widget>[
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context,
+                              '/second/$_id/1/$_isSearch/$_startA/$_finishB');
+                        },
+                        child: const Text('1'),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context,
+                              '/second/$_id/2/$_isSearch/$_startA/$_finishB');
+                        },
+                        child: const Text('2'),
+                      ),
+                      ElevatedButton(
+                          onPressed: () {
+                            Navigator.pushNamed(context,
+                                '/second/$_id/3/$_isSearch/$_startA/$_finishB');
+                          },
+                          child: const Text('3')),
+                      if (_id == 'Чонгарская') ...[
                         ElevatedButton(
                             onPressed: () {
                               Navigator.pushNamed(context,
-                                  '/second/$_id/1/$_isSearch/$_startA/$_finishB');
+                                  '/second/$_id/4/$_isSearch/$_startA/$_finishB');
                             },
-                            child: const Text('1')),
+                            child: const Text('4')),
                         ElevatedButton(
                             onPressed: () {
                               Navigator.pushNamed(context,
-                                  '/second/$_id/2/$_isSearch/$_startA/$_finishB');
+                                  '/second/$_id/5/$_isSearch/$_startA/$_finishB');
                             },
-                            child: const Text('2')),
-                        ElevatedButton(
-                            onPressed: () {
-                              Navigator.pushNamed(context,
-                                  '/second/$_id/3/$_isSearch/$_startA/$_finishB');
-                            },
-                            child: const Text('3')),
-                        if (_id == 'Чонгарская') ...[
-                          ElevatedButton(
-                              onPressed: () {
-                                Navigator.pushNamed(context,
-                                    '/second/$_id/4/$_isSearch/$_startA/$_finishB');
-                              },
-                              child: const Text('4')),
-                          ElevatedButton(
-                              onPressed: () {
-                                Navigator.pushNamed(context,
-                                    '/second/$_id/5/$_isSearch/$_startA/$_finishB');
-                              },
-                              child: const Text('5')),
-                        ],
-                      ]),
+                            child: const Text('5')),
+                      ]
+                    ],
+                  ),
                 ),
+                // Container(
+                //   alignment: Alignment.bottomCenter,
+                //   child: ButtonBar(
+                //     alignment: MainAxisAlignment.spaceAround,
+                //     children: <Widget>[
+                //       if (_id == 'Чонгарская') ...[
+                //         ElevatedButton(
+                //             onPressed: () {
+                //               Navigator.pushNamed(context,
+                //                   '/second/$_id/4/$_isSearch/$_startA/$_finishB');
+                //             },
+                //             child: const Text('4')),
+                //         ElevatedButton(
+                //             onPressed: () {
+                //               Navigator.pushNamed(context,
+                //                   '/second/$_id/5/$_isSearch/$_startA/$_finishB');
+                //             },
+                //             child: const Text('5')),
+                //       ],
+                //     ],
+                //   ),
+                // ),
                 // Container(
                 //   child: Image.network("ссылка на пикчу не готова"),
                 // ),
@@ -197,7 +227,10 @@ class Navigator1 extends StatelessWidget {
                             builder: (_) => DialogWrongData());
                       } else if (_startA == '100' || _finishB == 'Раздевалка') {
                         showDialog(
-                            context: context, builder: (_) => Checkroom());
+                            context: context,
+                            builder: (_) => Checkroom(
+                                  adress: _id,
+                                ));
                       } else if (_id == 'Фруктовая') {
                         http.get(Uri.parse(
                             'http://tortik13.pythonanywhere.com/fruktovaya/$_startA/$_finishB'));
