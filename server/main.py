@@ -241,7 +241,7 @@ def navigator2(from_cab, to_cab):
     if not to_cab.isdigit() and to_cab[:-1] not in ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"]:
         to_cab = to_cab.capitalize()
 
-    xy_choice = [[220, 730], [640, 730]]
+    xy_choice = [[290, 325], [990, 325]]
     images = ["static/img/chongarskaya_floor1.jfif",
               "static/img/chongarskaya_floor2.jfif",
               "static/img/chongarskaya_floor3.jfif",
@@ -261,16 +261,38 @@ def navigator2(from_cab, to_cab):
 
         elif (str(point_a.floor) in image[-11:]) and (str(point_b.floor) in image[-11:]):
             """ Попадаем сюда, если пункты А и В находятся на одном этаже """
-            with Image.open(image) as im:
-                draw = ImageDraw.Draw(im)
-                ax, ay = point_a.x_coordinate, point_a.y_coordinate
-                bx, by = point_b.x_coordinate, point_b.y_coordinate
+            ax, ay = point_a.x_coordinate, point_a.y_coordinate
+            bx, by = point_b.x_coordinate, point_b.y_coordinate
 
-                final_way = [(ax, ay), (ax, xy_choice[1][1]), (bx, xy_choice[1][1]), (bx, by)]
-                draw.line(final_way, fill="RED", width=8)
+            if (ay <= 275 and by <= 275) or ay == by:   # если оба пункта на уровне лестницы или их у координаты равны
+                with Image.open(image) as im:
+                    draw = ImageDraw.Draw(im)
+                    final_way = [(ax, ay), (ax, xy_choice[0][1]), (bx, xy_choice[0][1]), (bx, by)]
+                    draw.line(final_way, fill="RED", width=8)
 
-                image2 = image[:-5] + "(1).jfif"
-                im.save(image2)
+                    image2 = image[:-5] + "(1).jfif"
+                    im.save(image2)
+
+            elif 275 < ay != by > 275:   # если оба пункта ниже уровня лестницы и не равны
+                with Image.open(image) as im:
+                    draw = ImageDraw.Draw(im)
+                    [ax, ay], [bx, by] = sorted([[ax, ay], [bx, by]], key=lambda j: -j[1])
+                    final_way = [(ax, ay), (ax, by), (bx, by)]
+                    draw.line(final_way, fill="RED", width=8)
+
+                    image2 = image[:-5] + "(1).jfif"
+                    im.save(image2)
+
+            else:   # все остальные случаи
+                with Image.open(image) as im:
+                    draw = ImageDraw.Draw(im)
+                    [ax, ay], [bx, by] = sorted([[ax, ay], [bx, by]], key=lambda j: -j[1])
+                    coords = min_distance(bx, by, xy_choice)
+                    final_way = [(ax, ay), (ax, coords[1]), (coords[0], coords[1]), (coords[0], by), (bx, by)]
+                    draw.line(final_way, fill="RED", width=8)
+
+                    image2 = image[:-5] + "(1).jfif"
+                    im.save(image2)
 
         elif str(point_a.floor) in image[-11:] and leader:
             """ Попадаем сюда, если обрабатываем картинку с этажом, на котором находится пункт А, ведём до лестницы """
@@ -278,7 +300,7 @@ def navigator2(from_cab, to_cab):
                 draw = ImageDraw.Draw(im)
                 x, y = point_a.x_coordinate, point_a.y_coordinate
 
-                final_way = [(x, y), (x, xy_choice[1][1]), (leader[0], xy_choice[1][1]), (leader[0], leader[1])]
+                final_way = [(x, y), (x, xy_choice[0][1]), (leader[0], xy_choice[0][1]), (leader[0], leader[1])]
                 draw.line(final_way, fill="RED", width=8)
 
                 image2 = image[:-5] + "(1).jfif"
@@ -512,7 +534,7 @@ def nearest(school, x, y):
     :return : возвращает координаты ближайшей лестницы
     """
     leaders = {"fruktovaya": [[120, 180], [1160, 180], [120, 865], [1160, 865]],
-               "chongarskaya": [[1, 1], [1, 1], [1, 1], [1, 1]],
+               "chongarskaya": [[290, 200], [990, 200]],
                "krivorozhskaya": [[435, 707], [860, 707]]}
     minxdiff, minydiff = 2000, 2000
     choice = leaders[school]
