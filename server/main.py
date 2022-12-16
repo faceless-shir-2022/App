@@ -44,9 +44,9 @@ def navigator1(from_cab, to_cab):
 
     x_choice, y_choice = [170, 1110], [180, 865]
     xy_choice = [[170, 180], [1110, 180], [170, 865], [1110, 865]]
-    images = ["static/img/fruktovaya_floor1.jfif",
-              "static/img/fruktovaya_floor2.jfif",
-              "static/img/fruktovaya_floor3.jfif"]
+    images = ["static/img/fruktovaya/floor1.jfif",
+              "static/img/fruktovaya/floor2.jfif",
+              "static/img/fruktovaya/floor3.jfif"]
     db_sess = db_session.create_session()
     point_a = db_sess.query(Fruktovaya).filter(Fruktovaya.name_or_number == from_cab).first()
     point_b = db_sess.query(Fruktovaya).filter(Fruktovaya.name_or_number == to_cab).first()
@@ -57,7 +57,7 @@ def navigator1(from_cab, to_cab):
         if (str(point_a.floor) not in image[-11:]) and (str(point_b.floor) not in image[-11:]):
             """ Попадаем сюда, если картинка не будет задействована в построении маршрута, изменений нет """
             with Image.open(image) as im:
-                image2 = image[:-5] + "(1).jfif"
+                image2 = image[:-11] + f"{from_cab}-{to_cab}-" + image[-11:]
                 im.save(image2)
 
         elif (str(point_a.floor) in image[-11:]) and (str(point_b.floor) in image[-11:]):
@@ -104,9 +104,9 @@ def navigator1(from_cab, to_cab):
                             with Image.open(images[1]) as im2:
                                 draw = ImageDraw.Draw(im2)
                                 draw.line([(leader[0], leader[1]), (leader1[0], leader1[1])], fill="RED", width=10)
-                                image2 = images[1][:-5] + "(1).jfif"
+                                image2 = images[1][:-11] + f"{from_cab}-{to_cab}-" + images[1][-11:]
                                 im2.save(image2)
-                            image2 = image[:-5] + "(1).jfif"
+                            image2 = image[:-11] + f"{from_cab}-{to_cab}-" + image[-11:]
                             im.save(image2)
                             break
 
@@ -160,7 +160,7 @@ def navigator1(from_cab, to_cab):
                                              (bx, by)]
                         draw.line(final_way, fill="RED", width=10)
 
-                image2 = image[:-5] + "(1).jfif"
+                image2 = image[:-11] + f"{from_cab}-{to_cab}-" + image[-11:]
                 im.save(image2)
 
         elif str(point_a.floor) in image[-11:] and leader:
@@ -178,7 +178,7 @@ def navigator1(from_cab, to_cab):
                     final_way = [(x, y), (x, leader[1]), (leader[0], leader[1])]
                 draw.line(final_way, fill="RED", width=10)
 
-                image2 = image[:-5] + "(1).jfif"
+                image2 = image[:-11] + f"{from_cab}-{to_cab}-" + image[-11:]
                 im.save(image2)
 
         elif str(point_b.floor) in image[-11:] and leader:
@@ -205,12 +205,12 @@ def navigator1(from_cab, to_cab):
                         final_way = [(x, y), (coords[0], y), (coords[0], coords[1]), (leader[0], leader[1])]
                 draw.line(final_way, fill="RED", width=10)
 
-                image2 = image[:-5] + "(1).jfif"
+                image2 = image[:-11] + f"{from_cab}-{to_cab}-" + image[-11:]
                 im.save(image2)
 
-    return f"""<img src="/static/img/fruktovaya_floor1(1).jfif" alt="...">
-                <img src="/static/img/fruktovaya_floor2(1).jfif" alt="...">
-                <img src="/static/img/fruktovaya_floor3(1).jfif" alt="...">"""
+    return f"""<img src="/static/img/fruktovaya/{from_cab}-{to_cab}-floor1.jfif" alt="...">
+                <img src="/static/img/fruktovaya/{from_cab}-{to_cab}-floor2.jfif" alt="...">
+                <img src="/static/img/fruktovaya/{from_cab}-{to_cab}-floor3.jfif" alt="...">"""
 
 
 @app.route("/chongarskaya/<from_cab>/<to_cab>", methods=['GET', 'POST'])
@@ -242,11 +242,11 @@ def navigator2(from_cab, to_cab):
         to_cab = to_cab.capitalize()
 
     xy_choice = [[290, 325], [990, 325]]
-    images = ["static/img/chongarskaya_floor1.jfif",
-              "static/img/chongarskaya_floor2.jfif",
-              "static/img/chongarskaya_floor3.jfif",
-              "static/img/chongarskaya_floor4.jfif",
-              "static/img/chongarskaya_floor5.jfif"]
+    images = ["static/img/chongarskaya/floor1.jfif",
+              "static/img/chongarskaya/floor2.jfif",
+              "static/img/chongarskaya/floor3.jfif",
+              "static/img/chongarskaya/floor4.jfif",
+              "static/img/chongarskaya/floor5.jfif"]
     db_sess = db_session.create_session()
     point_a = db_sess.query(Chongarskaya).filter(Chongarskaya.name_or_number == from_cab).first()
     point_b = db_sess.query(Chongarskaya).filter(Chongarskaya.name_or_number == to_cab).first()
@@ -256,7 +256,7 @@ def navigator2(from_cab, to_cab):
         if (str(point_a.floor) not in image[-11:]) and (str(point_b.floor) not in image[-11:]):
             """ Попадаем сюда, если картинка не будет задействована в построении маршрута, изменений нет """
             with Image.open(image) as im:
-                image2 = image[:-5] + "(1).jfif"
+                image2 = image[:-11] + f"{from_cab}-{to_cab}-" + image[-11:]
                 im.save(image2)
 
         elif (str(point_a.floor) in image[-11:]) and (str(point_b.floor) in image[-11:]):
@@ -270,7 +270,7 @@ def navigator2(from_cab, to_cab):
                     final_way = [(ax, ay), (ax, xy_choice[0][1]), (bx, xy_choice[0][1]), (bx, by)]
                     draw.line(final_way, fill="RED", width=8)
 
-                    image2 = image[:-5] + "(1).jfif"
+                    image2 = image[:-11] + f"{from_cab}-{to_cab}-" + image[-11:]
                     im.save(image2)
 
             elif 275 < ay != by > 275:   # если оба пункта ниже уровня лестницы и не равны
@@ -280,7 +280,7 @@ def navigator2(from_cab, to_cab):
                     final_way = [(ax, ay), (ax, by), (bx, by)]
                     draw.line(final_way, fill="RED", width=8)
 
-                    image2 = image[:-5] + "(1).jfif"
+                    image2 = image[:-11] + f"{from_cab}-{to_cab}-" + image[-11:]
                     im.save(image2)
 
             else:   # все остальные случаи
@@ -291,7 +291,7 @@ def navigator2(from_cab, to_cab):
                     final_way = [(ax, ay), (ax, coords[1]), (coords[0], coords[1]), (coords[0], by), (bx, by)]
                     draw.line(final_way, fill="RED", width=8)
 
-                    image2 = image[:-5] + "(1).jfif"
+                    image2 = image[:-11] + f"{from_cab}-{to_cab}-" + image[-11:]
                     im.save(image2)
 
         elif str(point_a.floor) in image[-11:] and leader:
@@ -303,7 +303,7 @@ def navigator2(from_cab, to_cab):
                 final_way = [(x, y), (x, xy_choice[0][1]), (leader[0], xy_choice[0][1]), (leader[0], leader[1])]
                 draw.line(final_way, fill="RED", width=8)
 
-                image2 = image[:-5] + "(1).jfif"
+                image2 = image[:-11] + f"{from_cab}-{to_cab}-" + image[-11:]
                 im.save(image2)
 
         elif str(point_b.floor) in image[-11:] and leader:
@@ -315,14 +315,14 @@ def navigator2(from_cab, to_cab):
                 final_way = [(x, y), (x, xy_choice[1][1]), (leader[0], xy_choice[1][1]), (leader[0], leader[1])]
                 draw.line(final_way, fill="RED", width=8)
 
-                image2 = image[:-5] + "(1).jfif"
+                image2 = image[:-11] + f"{from_cab}-{to_cab}-" + image[-11:]
                 im.save(image2)
 
-    return f"""<img src="/static/img/chongarskaya_floor1(1).jfif" alt="...">
-                <img src="/static/img/chongarskaya_floor2(1).jfif" alt="...">
-                <img src="/static/img/chongarskaya_floor3(1).jfif" alt="...">
-                <img src="/static/img/chongarskaya_floor4(1).jfif" alt="...">
-                <img src="/static/img/chongarskaya_floor5(1).jfif" alt="...">"""
+    return f"""<img src="/static/img/chongarskaya/{from_cab}-{to_cab}-floor1.jfif" alt="...">
+                <img src="/static/img/chongarskaya/{from_cab}-{to_cab}-floor2.jfif" alt="...">
+                <img src="/static/img/chongarskaya/{from_cab}-{to_cab}-floor3.jfif" alt="...">
+                <img src="/static/img/chongarskaya/{from_cab}-{to_cab}-floor4.jfif" alt="...">
+                <img src="/static/img/chongarskaya/{from_cab}-{to_cab}-floor5.jfif" alt="...">"""
 
 
 @app.route("/krivorozhskaya/<from_cab>/<to_cab>", methods=['GET', 'POST'])
@@ -356,9 +356,9 @@ def navigator3(from_cab, to_cab):
         to_cab = to_cab.capitalize()
 
     xy_choice = [[220, 730], [640, 730], [1140, 730]]
-    images = ["static/img/krivorozhskaya_floor1.jfif",
-              "static/img/krivorozhskaya_floor2.jfif",
-              "static/img/krivorozhskaya_floor3.jfif"]
+    images = ["static/img/krivorozhskaya/floor1.jfif",
+              "static/img/krivorozhskaya/floor2.jfif",
+              "static/img/krivorozhskaya/floor3.jfif"]
     exceptions = ["Спортзал", "Актовый зал"]
     db_sess = db_session.create_session()
     point_a = db_sess.query(Krivorozhskaya).filter(Krivorozhskaya.name_or_number == from_cab).first()
@@ -370,7 +370,7 @@ def navigator3(from_cab, to_cab):
         if (str(point_a.floor) not in image[-11:]) and (str(point_b.floor) not in image[-11:]):
             """ Попадаем сюда, если картинка не будет задействована в построении маршрута, изменений нет """
             with Image.open(image) as im:
-                image2 = image[:-5] + "(1).jfif"
+                image2 = image[:-11] + f"{from_cab}-{to_cab}-" + image[-11:]
                 im.save(image2)
 
         elif (str(point_a.floor) in image[-11:]) and (str(point_b.floor) in image[-11:]) and \
@@ -384,7 +384,7 @@ def navigator3(from_cab, to_cab):
                 final_way = [(ax, ay), (ax, xy_choice[1][1]), (bx, xy_choice[1][1]), (bx, by)]
                 draw.line(final_way, fill="RED", width=8)
 
-                image2 = image[:-5] + "(1).jfif"
+                image2 = image[:-11] + f"{from_cab}-{to_cab}-" + image[-11:]
                 im.save(image2)
 
         elif str(point_a.floor) in image[-11:] and leader and \
@@ -400,7 +400,7 @@ def navigator3(from_cab, to_cab):
                 final_way = [(x, y), (x, xy_choice[1][1]), (leader[0], xy_choice[1][1]), (leader[0], leader[1])]
                 draw.line(final_way, fill="RED", width=8)
 
-                image2 = image[:-5] + "(1).jfif"
+                image2 = image[:-11] + f"{from_cab}-{to_cab}-" + image[-11:]
                 im.save(image2)
 
         elif str(point_b.floor) in image[-11:] and leader and \
@@ -416,7 +416,7 @@ def navigator3(from_cab, to_cab):
                 final_way = [(x, y), (x, xy_choice[1][1]), (leader[0], xy_choice[1][1]), (leader[0], leader[1])]
                 draw.line(final_way, fill="RED", width=8)
 
-                image2 = image[:-5] + "(1).jfif"
+                image2 = image[:-11] + f"{from_cab}-{to_cab}-" + image[-11:]
                 im.save(image2)
         else:
             """ Попадаем сюда, если один из пунктов является исключением """
@@ -426,7 +426,7 @@ def navigator3(from_cab, to_cab):
             for image_ in images:
                 """ Подчищаем все старые каракули """
                 with Image.open(image_) as im:
-                    image2 = image_[:-5] + "(1).jfif"
+                    image2 = image_[:-11] + f"{from_cab}-{to_cab}-" + image_[-11:]
                     im.save(image2)
 
             if from_cab in exceptions and to_cab in exceptions:
@@ -435,7 +435,7 @@ def navigator3(from_cab, to_cab):
                     draw = ImageDraw.Draw(im)
                     final_way = [(ax, ay), (bx, by)]
                     draw.line(final_way, fill="RED", width=8)
-                image2 = images[point_a.floor - 1][:-5] + "(1).jfif"
+                image2 = images[point_a.floor - 1][:-11] + f"{from_cab}-{to_cab}-" + images[point_a.floor - 1][-11:]
                 im.save(image2)
                 break
 
@@ -458,7 +458,7 @@ def navigator3(from_cab, to_cab):
                         draw.line(final_way, fill="RED", width=8)
                         final_way = [(ax, ay), (leader0[0], ay), (leader0[0], leader0[1])]
                         draw.line(final_way, fill="RED", width=8)
-                    image2 = images[floor_a - 1][:-5] + "(1).jfif"
+                    image2 = images[floor_a - 1][:-11] + f"{from_cab}-{to_cab}-" + images[floor_a - 1][-11:]
                     im.save(image2)
 
                     with Image.open(images[0]) as im:
@@ -466,7 +466,7 @@ def navigator3(from_cab, to_cab):
                         final_way = [(leader[0], leader[1]), (leader[0], xy_choice[1][1]),
                                      (leader0[0], xy_choice[1][1]), (leader0[0], leader0[1])]
                         draw.line(final_way, fill="RED", width=8)
-                    image2 = images[0][:-5] + "(1).jfif"
+                    image2 = images[0][:-11] + f"{from_cab}-{to_cab}-" + images[0][-11:]
                     im.save(image2)
                     break
 
@@ -479,7 +479,7 @@ def navigator3(from_cab, to_cab):
                         draw = ImageDraw.Draw(im)
                         final_way = [(ax, ay), (leader0[0], ay), (leader0[0], leader0[1])]
                         draw.line(final_way, fill="RED", width=8)
-                    image2 = images[floor_a - 1][:-5] + "(1).jfif"
+                    image2 = images[floor_a - 1][:-11] + f"{from_cab}-{to_cab}-" + images[floor_a - 1][-11:]
                     im.save(image2)
 
                     if floor_b == 1:
@@ -489,7 +489,7 @@ def navigator3(from_cab, to_cab):
                             final_way = [(bx, by), (bx, xy_choice[1][1]), (leader0[0], xy_choice[1][1]),
                                          (leader0[0], leader0[1])]
                             draw.line(final_way, fill="RED", width=8)
-                        image2 = images[0][:-5] + "(1).jfif"
+                        image2 = images[0][:-11] + f"{from_cab}-{to_cab}-" + images[0][-11:]
                         im.save(image2)
                         break
                     else:
@@ -499,7 +499,7 @@ def navigator3(from_cab, to_cab):
                             final_way = [(leader[0], leader[1]), (leader[0], xy_choice[1][1]),
                                          (leader0[0], xy_choice[1][1]), (leader0[0], leader0[1])]
                             draw.line(final_way, fill="RED", width=8)
-                        image2 = images[0][:-5] + "(1).jfif"
+                        image2 = images[0][:-11] + f"{from_cab}-{to_cab}-" + images[0][-11:]
                         im.save(image2)
 
                         with Image.open(images[floor_b - 1]) as im:
@@ -507,13 +507,13 @@ def navigator3(from_cab, to_cab):
                             final_way = [(bx, by), (bx, xy_choice[1][1]), (leader[0], xy_choice[1][1]),
                                          (leader[0], leader[1])]
                             draw.line(final_way, fill="RED", width=8)
-                        image2 = images[floor_b - 1][:-5] + "(1).jfif"
+                        image2 = images[floor_b - 1][:-11] + f"{from_cab}-{to_cab}-" + images[floor_b - 1][-11:]
                         im.save(image2)
                         break
 
-    return f"""<img src="/static/img/krivorozhskaya_floor1(1).jfif" alt="...">
-                <img src="/static/img/krivorozhskaya_floor2(1).jfif" alt="...">
-                <img src="/static/img/krivorozhskaya_floor3(1).jfif" alt="...">"""
+    return f"""<img src="/static/img/krivorozhskaya/{from_cab}-{to_cab}-floor1.jfif" alt="...">
+                <img src="/static/img/krivorozhskaya/{from_cab}-{to_cab}-floor2.jfif" alt="...">
+                <img src="/static/img/krivorozhskaya/{from_cab}-{to_cab}-floor3.jfif" alt="...">"""
 
 
 def nearest(school, x, y):
