@@ -76,7 +76,9 @@ class RulesOfUsing extends StatelessWidget {
 
 class Checkroom extends StatelessWidget {
   final adress;
-  const Checkroom({super.key, this.adress});
+  final A;
+  final B;
+  const Checkroom({super.key, this.adress, this.A, this.B});
 
   @override
   Widget build(BuildContext context) {
@@ -99,16 +101,17 @@ class Checkroom extends StatelessWidget {
           },
           child: const Text('Отмена'),
         ),
-        TextButton(
-          onPressed: () {
-            // Navigator.pop(context);
-            //  http.get(Uri.parse(
-            //                   'http://tortik13.pythonanywhere.com/krivorozhskaya/$_startA/$_finishB'));
-            //               Navigator.pushNamed(context,
-            //                   '/second/$_id/$_img/$_isSearch/$_startA/$_finishB');
-          },
-          child: const Text('ok'),
-        ),
+        // TextButton(
+        //   onPressed: () {
+
+        // Navigator.pop(context);
+        //  http.get(Uri.parse(
+        //                   'http://tortik13.pythonanywhere.com/krivorozhskaya/$_startA/$_finishB'));
+        //               Navigator.pushNamed(context,
+        //                   '/second/$_id/$_img/$_isSearch/$_startA/$_finishB');
+        // },
+        // child: const Text('ok'),
+        // ),
       ],
     );
   }

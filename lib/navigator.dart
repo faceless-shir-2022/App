@@ -74,8 +74,9 @@ class Navigator1 extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  child: Text('Выберите этаж:', textAlign: TextAlign.center),
-                  padding: EdgeInsets.only(top: 25),
+                  padding: const EdgeInsets.only(top: 25),
+                  child:
+                      const Text('Выберите этаж:', textAlign: TextAlign.center),
                 ),
                 Container(
                   alignment: Alignment.bottomCenter,
@@ -150,9 +151,13 @@ class Navigator1 extends StatelessWidget {
                 // ),
                 if (_isSearch == 'nosearch' && _id == 'Фруктовая') ...[
                   Container(
-                    alignment: Alignment.center,
-                    child: Image.asset("assets/image/fruktovaya/$_img.jpg"),
-                  ),
+                      alignment: Alignment.center,
+                      child: InteractiveViewer(
+                        boundaryMargin: EdgeInsets.all(100),
+                        minScale: 0.5,
+                        maxScale: 2,
+                        child: Image.asset("assets/image/fruktovaya/$_img.jpg"),
+                      ))
                 ] else if (_isSearch == 'search' && _id == 'Фруктовая') ...[
                   Container(
                     alignment: Alignment.center,
@@ -225,11 +230,14 @@ class Navigator1 extends StatelessWidget {
                         showDialog(
                             context: context,
                             builder: (_) => DialogWrongData());
-                      } else if (_startA == '100' || _finishB == 'Раздевалка') {
+                      } else if (_startA == 'Раздевалка' ||
+                          _finishB == 'Раздевалка') {
                         showDialog(
                             context: context,
                             builder: (_) => Checkroom(
                                   adress: _id,
+                                  A: _startA,
+                                  B: _finishB,
                                 ));
                       } else if (_id == 'Фруктовая') {
                         http.get(Uri.parse(

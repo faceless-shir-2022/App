@@ -1,6 +1,5 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'dart:io';
+import 'package:http/http.dart' as http;
 
 const List<String> list = <String>[
   '11T',
@@ -43,15 +42,22 @@ const List<String> list = <String>[
 // List<String> list = config.readAsLinesSync(encoding: utf8);
 
 class DropdownButtonExample extends StatefulWidget {
-  const DropdownButtonExample({super.key});
+  final A;
+  final B;
+  final adress;
+  const DropdownButtonExample({super.key, this.A, this.B, this.adress});
 
   @override
-  State<DropdownButtonExample> createState() => _DropdownButtonExampleState();
+  State<DropdownButtonExample> createState() =>
+      _DropdownButtonExampleState(A: A, B: B, adress: adress);
 }
 
 class _DropdownButtonExampleState extends State<DropdownButtonExample> {
+  _DropdownButtonExampleState({this.A, this.B, this.adress});
   String dropdownValue = list.first;
-
+  final A;
+  final B;
+  final adress;
   @override
   Widget build(BuildContext context) {
     return DropdownButton<String>(
@@ -67,6 +73,21 @@ class _DropdownButtonExampleState extends State<DropdownButtonExample> {
         // This is called when the user selects an item.
         setState(() {
           dropdownValue = value!;
+          if (A == 'Раздевалка') {
+            http.get(Uri.parse(
+                'http://tortik13.pythonanywhere.com/fruktovaya/$dropdownValue/$B'));
+            Navigator.pushNamed(
+                context, '/second/$adress/1/search/$dropdownValue/$B');
+            imageCache.clear();
+            imageCache.clearLiveImages();
+          } else {
+            http.get(Uri.parse(
+                'http://tortik13.pythonanywhere.com/fruktovaya/$A/$dropdownValue'));
+            Navigator.pushNamed(
+                context, '/second/$adress/1/search/$A/$dropdownValue');
+            imageCache.clear();
+            imageCache.clearLiveImages();
+          }
         });
       },
       items: list.map<DropdownMenuItem<String>>((String value) {

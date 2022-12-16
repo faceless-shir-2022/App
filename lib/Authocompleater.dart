@@ -161,7 +161,7 @@ class AutocompleteBasicExample extends StatelessWidget {
       },
       onSelected: (String selection) {
         debugPrint('You just selected $selection');
-        controller_2.text = '$selection';
+        controller_2.text = selection;
       },
       fieldViewBuilder:
           (context, textEditingController, focusNode, onEditingComplete) {
