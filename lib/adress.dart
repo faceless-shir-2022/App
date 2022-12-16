@@ -6,7 +6,7 @@ class Adress extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Выберите адрес вашей школы'),
+        title: const Text('Выберите адрес школы'),
         automaticallyImplyLeading: false,
         actions: <Widget>[
           IconButton(

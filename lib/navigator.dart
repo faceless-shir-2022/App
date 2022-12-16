@@ -124,31 +124,6 @@ class Navigator1 extends StatelessWidget {
                     ],
                   ),
                 ),
-                // Container(
-                //   alignment: Alignment.bottomCenter,
-                //   child: ButtonBar(
-                //     alignment: MainAxisAlignment.spaceAround,
-                //     children: <Widget>[
-                //       if (_id == 'Чонгарская') ...[
-                //         ElevatedButton(
-                //             onPressed: () {
-                //               Navigator.pushNamed(context,
-                //                   '/second/$_id/4/$_isSearch/$_startA/$_finishB');
-                //             },
-                //             child: const Text('4')),
-                //         ElevatedButton(
-                //             onPressed: () {
-                //               Navigator.pushNamed(context,
-                //                   '/second/$_id/5/$_isSearch/$_startA/$_finishB');
-                //             },
-                //             child: const Text('5')),
-                //       ],
-                //     ],
-                //   ),
-                // ),
-                // Container(
-                //   child: Image.network("ссылка на пикчу не готова"),
-                // ),
                 if (_isSearch == 'nosearch' && _id == 'Фруктовая') ...[
                   Container(
                       alignment: Alignment.center,
@@ -160,35 +135,57 @@ class Navigator1 extends StatelessWidget {
                       ))
                 ] else if (_isSearch == 'search' && _id == 'Фруктовая') ...[
                   Container(
-                    alignment: Alignment.center,
-                    child: Image.network(
-                        "http://tortik13.pythonanywhere.com/static/img/fruktovaya_floor$_img(1).jfif"),
-                  ),
+                      alignment: Alignment.center,
+                      child: InteractiveViewer(
+                        boundaryMargin: EdgeInsets.all(100),
+                        minScale: 0.5,
+                        maxScale: 2,
+                        child: Image.network(
+                            "http://tortik13.pythonanywhere.com/static/img/fruktovaya/$A-$B-floor$_img.jfif"),
+                      )),
                 ] else if (_isSearch == 'nosearch' && _id == 'Чонгарская') ...[
                   Container(
-                    alignment: Alignment.center,
-                    child: Image.asset("assets/image/chongarskaya/$_img.jpg"),
-                  ),
+                      alignment: Alignment.center,
+                      child: InteractiveViewer(
+                        boundaryMargin: EdgeInsets.all(100),
+                        minScale: 0.5,
+                        maxScale: 2,
+                        child:
+                            Image.asset("assets/image/chongarskaya/$_img.jpg"),
+                      )),
                 ] else if (_isSearch == 'search' && _id == 'Чонгарская') ...[
                   Container(
-                    alignment: Alignment.center,
-                    child: Image.network(
-                        "http://tortik13.pythonanywhere.com/static/img/chongarskaya_floor$_img(1).jfif"),
-                  ),
+                      alignment: Alignment.center,
+                      child: InteractiveViewer(
+                        boundaryMargin: EdgeInsets.all(100),
+                        minScale: 0.5,
+                        maxScale: 2,
+                        child: Image.network(
+                            "http://tortik13.pythonanywhere.com/static/img/chongarskaya/$A-$B-floor$_img.jfif"),
+                      )),
                 ] else if (_isSearch == 'nosearch' &&
                     _id == 'Криворожская') ...[
                   Container(
-                    alignment: Alignment.center,
-                    child: Image.asset("assets/image/krivorozhskaya/$_img.jpg"),
-                  ),
+                      alignment: Alignment.center,
+                      child: InteractiveViewer(
+                        boundaryMargin: EdgeInsets.all(100),
+                        minScale: 0.5,
+                        maxScale: 2,
+                        child: Image.asset(
+                            "assets/image/krivorozhskaya/$_img.jpg"),
+                      )),
                 ] else if (_isSearch == 'search' && _id == 'Криворожская') ...[
                   Container(
-                    alignment: Alignment.center,
-                    child: Image.network(
-                        "http://tortik13.pythonanywhere.com/static/img/krivorozhskaya_floor$_img(1).jfif"),
-                  ),
+                      alignment: Alignment.center,
+                      child: InteractiveViewer(
+                        boundaryMargin: EdgeInsets.all(100),
+                        minScale: 0.5,
+                        maxScale: 2,
+                        child: Image.network(
+                            "http://tortik13.pythonanywhere.com/static/img/krivorozhskaya/$A-$B-floor$_img.jfif"),
+                      )),
                 ],
-                const Text('Вы ищите путь...')
+                const Text('Вы ищете путь...')
               ],
             ),
             Column(
