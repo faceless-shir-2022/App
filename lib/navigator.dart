@@ -141,7 +141,7 @@ class Navigator1 extends StatelessWidget {
                         minScale: 0.5,
                         maxScale: 2,
                         child: Image.network(
-                            "http://tortik13.pythonanywhere.com/static/img/fruktovaya/$A-$B-floor$_img.jfif"),
+                            "http://tortik13.pythonanywhere.com/static/img/fruktovaya/$_startA-$_finishB-floor$_img.jfif"),
                       )),
                 ] else if (_isSearch == 'nosearch' && _id == 'Чонгарская') ...[
                   Container(
@@ -161,7 +161,7 @@ class Navigator1 extends StatelessWidget {
                         minScale: 0.5,
                         maxScale: 2,
                         child: Image.network(
-                            "http://tortik13.pythonanywhere.com/static/img/chongarskaya/$A-$B-floor$_img.jfif"),
+                            "http://tortik13.pythonanywhere.com/static/img/chongarskaya/$_startA-$_finishB-floor$_img.jfif"),
                       )),
                 ] else if (_isSearch == 'nosearch' &&
                     _id == 'Криворожская') ...[
@@ -182,7 +182,7 @@ class Navigator1 extends StatelessWidget {
                         minScale: 0.5,
                         maxScale: 2,
                         child: Image.network(
-                            "http://tortik13.pythonanywhere.com/static/img/krivorozhskaya/$A-$B-floor$_img.jfif"),
+                            "http://tortik13.pythonanywhere.com/static/img/krivorozhskaya/$_startA-$_finishB-floor$_img.jfif"),
                       )),
                 ],
                 const Text('Вы ищете путь...')
