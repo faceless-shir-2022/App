@@ -50,7 +50,10 @@ def navigator1(from_cab, to_cab):
     db_sess = db_session.create_session()
     point_a = db_sess.query(Fruktovaya).filter(Fruktovaya.name_or_number == from_cab).first()
     point_b = db_sess.query(Fruktovaya).filter(Fruktovaya.name_or_number == to_cab).first()
-    leader = nearest("fruktovaya", point_a.x_coordinate, point_a.y_coordinate)
+    if point_b.floor == 1:
+        leader = nearest("fruktovaya", point_b.x_coordinate, point_a.y_coordinate)
+    else:
+        leader = nearest("fruktovaya", point_a.x_coordinate, point_a.y_coordinate)
 
     for image in images:
 
@@ -169,7 +172,7 @@ def navigator1(from_cab, to_cab):
                 draw = ImageDraw.Draw(im)
                 x, y = point_a.x_coordinate, point_a.y_coordinate
 
-                coords = min_distance(leader[0], leader[1], xy_choice)
+                coords = min_distance(x, y, xy_choice)
 
                 if x <= 225 or x >= 1053:   # если стартуем от вертикальных стен
                     final_way = [(x, y), (coords[0], y), (coords[0], coords[1]), (leader[0], coords[1]),
