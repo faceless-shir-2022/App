@@ -78,7 +78,7 @@ class Checkroom extends StatelessWidget {
   final adress;
   final A;
   final B;
-  const Checkroom({super.key, this.adress, this.A, this.B});
+  Checkroom({super.key, this.adress, this.A, this.B});
 
   @override
   Widget build(BuildContext context) {
@@ -93,11 +93,15 @@ class Checkroom extends StatelessWidget {
         ),
         Container(
           alignment: Alignment.topCenter,
-          child: const DropdownButtonExample(),
+          child: DropdownButtonExample(adress: adress, A: A, B: B),
         ),
         TextButton(
           onPressed: () {
-            Navigator.pop(context);
+            http.get(Uri.parse(
+                'http://tortik13.pythonanywhere.com/fruktovaya/$A/$B'));
+            Navigator.pushNamed(context, '/second/$adress/1/search/$A/$B');
+            imageCache.clear();
+            imageCache.clearLiveImages();
           },
           child: const Text('Отмена'),
         ),

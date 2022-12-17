@@ -1,42 +1,46 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 const List<String> list = <String>[
-  '11T',
-  '11C',
-  '10T',
-  '10C',
+  '11Т',
+  '11С',
+  '10Т',
+  '10С',
+  '9А',
   '9М',
-  '9A',
-  '9B',
-  '8A',
+  '9В',
+  '8А',
   '8Б',
-  '8B',
+  '8В',
   '8Г',
-  '7K',
-  '7O',
-  '7T',
+  '7К',
+  '7Т',
+  '7О',
   '7Я',
-  '6K',
-  '6O',
+  '6К',
+  '6О',
   '6Ф',
   '6Я',
   '5Я',
   '5Ф',
-  '5O',
-  '5T',
-  '4A',
-  '4Б',
-  '4В',
-  '4Г',
-  '3З',
-  '3Э',
-  '3Р',
-  '3Т',
+  '5О',
+  '5Т',
   '2В',
-  '2Т',
+  '4В',
+  '2О',
+  '3Э',
+  '4Г',
+  '4А',
+  '3З',
+  '4Б',
+  '3Р',
+  '4Э',
+  '3Т',
   '1Р',
-  '1Э'
+  '1Э',
+  '2Т',
 ];
 // var config = File("/assets/classes.txt");
 // List<String> list = config.readAsLinesSync(encoding: utf8);
@@ -58,6 +62,7 @@ class _DropdownButtonExampleState extends State<DropdownButtonExample> {
   final A;
   final B;
   final adress;
+  var uri;
   @override
   Widget build(BuildContext context) {
     return DropdownButton<String>(
@@ -74,6 +79,7 @@ class _DropdownButtonExampleState extends State<DropdownButtonExample> {
         setState(() {
           dropdownValue = value!;
           if (A == 'Раздевалка') {
+            debugPrint('1');
             http.get(Uri.parse(
                 'http://tortik13.pythonanywhere.com/fruktovaya/$dropdownValue/$B'));
             Navigator.pushNamed(
